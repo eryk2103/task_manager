@@ -12,6 +12,4 @@ $router = new Router();
 $router->register('/', ['get'], ProjectController::class, 'index')
     ->register('/new', ['get', 'post'], ProjectController::class, 'store');
 
-
 $router->resolve($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
-
