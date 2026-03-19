@@ -19,7 +19,7 @@ class Router {
                 call_user_func([new $route[1], $route[2]]);
                 return;
             }
-            echo 'route not found';
         }
+        echo 'route not found';
     }
 }

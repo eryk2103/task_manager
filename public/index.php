@@ -11,7 +11,8 @@ $requestUri = $_SERVER['REQUEST_URI'];
 $router = new Router();
 
 $router->register([
-    ['/', ProjectController::class, 'index']
+    ['/', ProjectController::class, 'index'],
+    ['/new', ProjectController::class, 'store']
 ]);
 
 $router->resolve($requestUri);
