@@ -25,7 +25,13 @@ class ProjectController {
             $validator->validate($description, 'description', [Validator::required(), Validator::maxLength(1000)]);
             
             if(!$validator->isValid()) {
-                return new Response(400,new View('project/store.php', ['errors' => $validator->getErrors()]));
+                return new Response(400,new View('project/store.php', [
+                    'errors' => $validator->getErrors(),
+                    'form' => [
+                        'name' => $name,
+                        'description' => $description
+                    ]
+                ]));
             }
 
             $db = Database::getDb();
