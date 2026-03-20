@@ -1,9 +1,9 @@
 <?php
 namespace App\Controller;
 
-use App\Validator;
-use App\View;
-use App\Response;
+use App\Core\Validator;
+use App\Core\View;
+use App\Core\Response;
 
 use App\Model\Project;
 use App\Service\ProjectService;

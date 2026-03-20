@@ -1,7 +1,7 @@
 <?php
 namespace App\Repository;
 
-use App\Database;
+use App\Core\Database;
 
 use App\Model\Project;
 use App\Repository\ProjectRepositoryInterface;

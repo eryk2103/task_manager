@@ -4,7 +4,7 @@ spl_autoload_register(function($className) {
     require $className;
 });
 
-use App\Router;
+use App\Core\Router;
 use App\Controller\ProjectController;
 
 $router = new Router();

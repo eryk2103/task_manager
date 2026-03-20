@@ -1,7 +1,7 @@
 <?php
-namespace App;  
+namespace App\Core;  
 
-use App\Response;
+use App\Core\Response;
 
 class Router {
     private array $routes = [];

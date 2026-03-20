@@ -1,7 +1,7 @@
 <?php
-namespace App;
+namespace App\Core;
 
-use App\View;
+use App\Core\View;
 
 class Response {
     private array $statusCodes = [
