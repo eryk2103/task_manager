@@ -19,7 +19,7 @@ services:
       - ./nginx:/etc/nginx/conf.d
   db:
     container_name: task-manager-db
-    image: postgres
+    image: postgres:18.3
     restart: always
     shm_size: 128mb
     environment:
