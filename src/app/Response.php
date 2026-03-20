@@ -4,7 +4,11 @@ namespace App;
 use App\View;
 
 class Response {
-    private array $statusCodes = [200 => '200 Ok', 405 => '405 Method Not Allowed', 404 => '404 Page Not Found', 303 => '303 See Other', 400 => '400 Bad Request'];
+    private array $statusCodes = [
+        200 => '200 Ok', 405 => '405 Method Not Allowed', 404 => '404 Page Not Found', 
+        303 => '303 See Other', 400 => '400 Bad Request'
+    ];
+    
     public function __construct(
         private int $code = 200,
         private ?View $view = null,

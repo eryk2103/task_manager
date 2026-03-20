@@ -1,5 +1,4 @@
 <?php
-
 namespace App;
 
 class Database {
@@ -19,5 +18,4 @@ class Database {
         }
         return self::$db;
     } 
-
 }
