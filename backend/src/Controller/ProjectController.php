@@ -16,7 +16,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints\Json;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('projects')]
+#[Route('api/projects')]
 class ProjectController extends AbstractController
 {
     #[Route('', name: 'api_projects_get_all', methods: ['GET'])]
