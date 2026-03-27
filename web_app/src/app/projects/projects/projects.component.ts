@@ -3,10 +3,11 @@ import { ProjectService } from '../project.service';
 import { Project } from '../project.model';
 import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-projects',
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, RouterLink],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.css',
 })

@@ -4,6 +4,7 @@ import { NewProjectPage } from './projects/new-project-page/new-project-page.com
 import { DashboardPage } from './dashboard/dashboard-page/dashboard-page.component';
 import { TasksPage } from './tasks/tasks-page/tasks-page.component';
 import { SettingsPage } from './settings/settings-page/settings-page.component';
+import { ProjectDetailPage } from './projects/project-detail-page/project-detail-page.component';
 
 export const routes: Routes = [
     {
@@ -17,6 +18,10 @@ export const routes: Routes = [
     {
         path: 'projects/new',
         component: NewProjectPage
+    },
+    {
+        path: 'projects/:id',
+        component: ProjectDetailPage
     },
     {
         path: 'tasks',
