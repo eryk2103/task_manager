@@ -5,6 +5,8 @@ import { DashboardPage } from './dashboard/dashboard-page/dashboard-page.compone
 import { TasksPage } from './tasks/tasks-page/tasks-page.component';
 import { SettingsPage } from './settings/settings-page/settings-page.component';
 import { ProjectDetailPage } from './projects/project-detail-page/project-detail-page.component';
+import { Login } from './auth/login/login.component';
+import { Register } from './auth/register/register.component';
 
 export const routes: Routes = [
     {
@@ -30,5 +32,13 @@ export const routes: Routes = [
     {
         path: 'settings',
         component: SettingsPage
+    },
+    {
+        path: 'login',
+        component: Login
+    },
+    {
+        path: 'register',
+        component: Register
     }
 ];
