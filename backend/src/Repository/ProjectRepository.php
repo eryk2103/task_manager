@@ -16,6 +16,20 @@ class ProjectRepository extends ServiceEntityRepository
         parent::__construct($registry, Project::class);
     }
 
+    public function searchByName($value): array
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        if ($value !== '') {
+            $qb->andWhere('p.name LIKE :val')
+                ->setParameter('val', '%' . $value . '%');
+        }
+
+        return $qb->orderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     //    /**
     //     * @return Project[] Returns an array of Project objects
     //     */

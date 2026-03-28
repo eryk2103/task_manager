@@ -20,9 +20,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class ProjectController extends AbstractController
 {
     #[Route('', name: 'api_projects_get_all', methods: ['GET'])]
-    public function getAll(ProjectRepository $projectRepository): JsonResponse
+    public function getAll(Request $request, ProjectRepository $projectRepository): JsonResponse
     {
-        $projects = $projectRepository->findAll();
+        $search = $request->query->get('search', '');
+
+        $projects = $projectRepository->searchByName($search);
         return $this->json(array_map(fn($item) => new ProjectDTO($item->getId(), $item->getName(), $item->getDescription()), $projects), 200);
     }
 

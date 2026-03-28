@@ -11,8 +11,8 @@ export class ProjectService {
 
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<Project[]> {
-    return this.http.get<Project[]>(this.apiUrl);
+  getAll(search: string = ''): Observable<Project[]> {
+    return this.http.get<Project[]>(this.apiUrl, { params: { search: search } });
   }
 
   getById(id: number): Observable<Project> {

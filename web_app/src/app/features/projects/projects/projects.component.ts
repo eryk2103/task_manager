@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ProjectService } from '../project.service';
 import { Project } from '../project.model';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, Observable, switchMap } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { RouterLink } from "@angular/router";
 
@@ -14,6 +14,20 @@ import { RouterLink } from "@angular/router";
 export class Projects {
   private projectService = inject(ProjectService);
 
-  $projects: Observable<Project[]> = this.projectService.getAll();
+  private query$ = new BehaviorSubject<string>(''); // reactive query source
 
+  @Input()
+  set query(value: string) {
+    this.query$.next(value);
+  }
+
+  projects$: Observable<Project[]> = this.query$.pipe(
+    debounceTime(100),
+    distinctUntilChanged(),
+    switchMap((q) => this.projectService.getAll(q))
+  );
+
+  ngOnInit(): void {
+    this.query$.next(this.query$.value);
+  }
 }

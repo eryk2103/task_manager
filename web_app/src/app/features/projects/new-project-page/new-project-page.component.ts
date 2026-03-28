@@ -42,7 +42,7 @@ export class NewProjectPage {
     }
 
     this.projectService.create(newProject).subscribe({
-      next: res => this.router.navigate(['/projects']),
+      next: res => this.router.navigate(['/']),
       error: err => this.error = err
     })
   }
