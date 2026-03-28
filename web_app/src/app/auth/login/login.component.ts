@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -9,6 +10,9 @@ import { RouterLink } from '@angular/router';
   styleUrl: './login.component.css',
 })
 export class Login {
+  authService = inject(AuthService);
+  router = inject(Router);
+
   form = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required])
@@ -27,7 +31,11 @@ export class Login {
       this.form.markAllAsTouched();
       return;
     }
+    const email = this.email?.value || '';
+    const password = this.password?.value || '';
 
-    console.log(this.form.value);
+    this.authService.login(email, password).subscribe({
+      next: () => this.router.navigateByUrl('/')
+    })
   }
 }

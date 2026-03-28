@@ -7,31 +7,38 @@ import { SettingsPage } from './settings/settings-page/settings-page.component';
 import { ProjectDetailPage } from './projects/project-detail-page/project-detail-page.component';
 import { Login } from './auth/login/login.component';
 import { Register } from './auth/register/register.component';
+import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
     {
         path: '',
-        component: DashboardPage
-    },
-    {
-        path: 'projects',
-        component: ProjectsPage,
-    },
-    {
-        path: 'projects/new',
-        component: NewProjectPage
-    },
-    {
-        path: 'projects/:id',
-        component: ProjectDetailPage
-    },
-    {
-        path: 'tasks',
-        component: TasksPage
-    },
-    {
-        path: 'settings',
-        component: SettingsPage
+        canActivate: [authGuard],
+        children: [
+            {
+                path: '',
+                component: DashboardPage,
+            },
+            {
+                path: 'projects',
+                component: ProjectsPage,
+            },
+            {
+                path: 'projects/new',
+                component: NewProjectPage
+            },
+            {
+                path: 'projects/:id',
+                component: ProjectDetailPage
+            },
+            {
+                path: 'tasks',
+                component: TasksPage
+            },
+            {
+                path: 'settings',
+                component: SettingsPage
+            },
+        ]
     },
     {
         path: 'login',

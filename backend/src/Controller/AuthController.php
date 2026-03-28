@@ -15,10 +15,10 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('api/auth')]
+#[Route('api')]
 class AuthController extends AbstractController
 {
-    #[Route('/register', name: 'api_auth_register', methods: ['POST'])]
+    #[Route('/register', name: 'api_register', methods: ['POST'])]
     public function register(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         $data = $serializer->deserialize($request->getContent(), RegisterDTO::class, 'json');
@@ -46,5 +46,28 @@ class AuthController extends AbstractController
         }
 
         return $this->json(['email' => $user->getEmail()], 200);
+    }
+
+    #[Route('/logout', name: 'api_logout', methods: ['POST'])]
+    public function logout(): JsonResponse
+    {
+        $response = new JsonResponse();
+
+        // Clear the JWT cookie
+        $response->headers->clearCookie(
+            'BEARER',
+            '/',
+            null,
+            true,
+            true
+        );
+
+        return $response;
+    }
+
+    #[Route('/me', name: 'api_me', methods: ['GET'])]
+    public function me(#[CurrentUser] $user): JsonResponse
+    {
+        return $this->json(['email' => $user->getEmail()]);
     }
 }
