@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, map, Observable, of, shareReplay, tap } from 'rxjs';
+import { catchError, map, Observable, of, shareReplay } from 'rxjs';
 import { UserResponse } from './auth.model';
 
 @Injectable({

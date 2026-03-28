@@ -1,12 +1,23 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet, RouterLinkWithHref } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { RouterOutlet, Router } from '@angular/router';
+import { AuthService } from './features/auth/auth.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLinkWithHref],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class App {
-  protected readonly title = signal('web_app');
+  authService = inject(AuthService);
+  router = inject(Router);
+
+  logout() {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigateByUrl('/login');
+        this.authService.clearCache();
+      }
+    })
+  }
 }

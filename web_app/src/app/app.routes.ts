@@ -1,13 +1,11 @@
 import { Routes } from '@angular/router';
-import { ProjectsPage } from './projects/projects-page/projects-page.component';
-import { NewProjectPage } from './projects/new-project-page/new-project-page.component';
-import { DashboardPage } from './dashboard/dashboard-page/dashboard-page.component';
-import { TasksPage } from './tasks/tasks-page/tasks-page.component';
-import { SettingsPage } from './settings/settings-page/settings-page.component';
-import { ProjectDetailPage } from './projects/project-detail-page/project-detail-page.component';
-import { Login } from './auth/login/login.component';
-import { Register } from './auth/register/register.component';
-import { authGuard } from './auth.guard';
+import { ProjectsPage } from './features/projects/projects-page/projects-page.component';
+import { NewProjectPage } from './features/projects/new-project-page/new-project-page.component';
+import { ProjectDetailPage } from './features/projects/project-detail-page/project-detail-page.component';
+import { Login } from './features/auth/login/login.component';
+import { Register } from './features/auth/register/register.component';
+import { authGuard } from './features/auth/auth.guard';
+
 
 export const routes: Routes = [
     {
@@ -16,10 +14,6 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                component: DashboardPage,
-            },
-            {
-                path: 'projects',
                 component: ProjectsPage,
             },
             {
@@ -29,15 +23,7 @@ export const routes: Routes = [
             {
                 path: 'projects/:id',
                 component: ProjectDetailPage
-            },
-            {
-                path: 'tasks',
-                component: TasksPage
-            },
-            {
-                path: 'settings',
-                component: SettingsPage
-            },
+            }
         ]
     },
     {
