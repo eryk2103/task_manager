@@ -11,7 +11,7 @@ lexik_jwt_authentication:
 
     set_cookies:
         BEARER:
-            lifetime: 60 #3600
+            lifetime: 3600
             samesite: lax
             path: /
             secure: true
