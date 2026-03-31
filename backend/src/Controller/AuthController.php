@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
+use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -21,14 +23,15 @@ class AuthController extends AbstractController
     #[Route('/register', name: 'api_register', methods: ['POST'])]
     public function register(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
-        $data = $serializer->deserialize($request->getContent(), RegisterDTO::class, 'json');
-        $errors = $validator->validate($data);
+        try {
+            $data = $serializer->deserialize($request->getContent(), RegisterDTO::class, 'json');
+        } catch (NotNormalizableValueException | UnexpectedValueException $ex) {
+            return $this->json(['error' => 'Invalid data'], 400);
+        }
 
+        $errors = $validator->validate($data);
         if (count($errors) > 0) {
-            $violations = [];
-            foreach ($errors as $error) {
-                $violations[$error->getPropertyPath()] = $error->getMessage();
-            }
+            $violations = $this->formatErrors($errors);
             return $this->json(['errors' => $violations], 400);
         }
 
@@ -53,7 +56,6 @@ class AuthController extends AbstractController
     {
         $response = new JsonResponse();
 
-        // Clear the JWT cookie
         $response->headers->clearCookie(
             'BEARER',
             '/',
@@ -69,5 +71,14 @@ class AuthController extends AbstractController
     public function me(#[CurrentUser] $user): JsonResponse
     {
         return $this->json(['email' => $user->getEmail()]);
+    }
+
+    private function formatErrors($errors): array
+    {
+        $result = [];
+        foreach ($errors as $error) {
+            $result[$error->getPropertyPath()][] = $error->getMessage();
+        }
+        return $result;
     }
 }

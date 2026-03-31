@@ -2,9 +2,11 @@
 
 namespace App\DTO;
 
+use App\Enum\TaskStatus;
+
 use Symfony\Component\Validator\Constraints as Assert;
 
-class EditProjectDTO
+class CreateTaskDTO
 {
     public function __construct(
         #[Assert\NotBlank]
@@ -16,11 +18,7 @@ class EditProjectDTO
         )]
         public readonly ?string $name = null,
 
-        #[Assert\NotNull(message: 'Description cannot be null')]
-        #[Assert\Length(
-            max: 1000,
-            maxMessage: 'Description cannot be longer than {{ limit }} characters'
-        )]
-        public readonly ?string $description = null
+        #[Assert\NotNull]
+        public readonly ?int $projectId = null
     ) {}
 }
