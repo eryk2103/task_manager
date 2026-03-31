@@ -16,6 +16,43 @@ class TaskRepository extends ServiceEntityRepository
         parent::__construct($registry, Task::class);
     }
 
+    public function findByOwner($user): array
+    {
+        return $this->createQueryBuilder('t')
+            ->innerJoin('t.project', 'p')
+            ->andWhere("p.owner = :user")
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findOneByOwner($user, $id): ?Task
+    {
+        return $this->createQueryBuilder('t')
+            ->innerJoin('t.project', 'p')
+            ->andWhere("p.owner = :user")
+            ->setParameter('user', $user)
+            ->andWhere('t = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    public function findByOwnerAndProject($user, $project): array
+    {
+        return $this->createQueryBuilder('t')
+            ->innerJoin('t.project', 'p')
+            ->andWhere("p.owner = :user")
+            ->setParameter('user', $user)
+            ->andWhere("p = :project")
+            ->setParameter('project', $project)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     //    /**
     //     * @return Task[] Returns an array of Task objects
     //     */

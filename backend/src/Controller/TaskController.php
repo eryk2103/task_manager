@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -24,7 +25,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class TaskController extends AbstractController
 {
     #[Route('', name: 'api_tasks_get_all', methods: ['GET'])]
-    public function getAll(TaskRepository $taskRepository, Request $request, ProjectRepository $projectRepository): JsonResponse
+    public function getAll(#[CurrentUser()] $user, TaskRepository $taskRepository, Request $request, ProjectRepository $projectRepository): JsonResponse
     {
         $projectId = $request->query->get('project');
 
@@ -33,23 +34,23 @@ class TaskController extends AbstractController
                 return $this->json(['error' => 'Invalid project id'], 400);
             }
 
-            $project = $projectRepository->find($projectId);
+            $project = $projectRepository->findOneBy(['id' => $projectId, 'owner' => $user]);
             if ($project === null) {
                 return $this->json(['error' => 'Project not found'], 404);
             }
 
-            $tasks = $taskRepository->findBy(['project' => $project->getId()]);
+            $tasks = $taskRepository->findByOwnerAndProject($user, $project);
         } else {
-            $tasks = $taskRepository->findAll();
+            $tasks = $taskRepository->findByOwner($user);
         }
 
         return $this->json(array_map(fn(Task $item) => $this->mapToTaskDTO($item), $tasks), 200);
     }
 
     #[Route('/{id}', requirements: ['id' => '\d+'], name: 'api_tasks_get_by_id', methods: ['GET'])]
-    public function getById(int $id, TaskRepository $taskRepository): JsonResponse
+    public function getById(int $id, #[CurrentUser] $user, TaskRepository $taskRepository): JsonResponse
     {
-        $task = $taskRepository->find($id);
+        $task = $taskRepository->findOneByOwner($user, $id);
         if ($task == null) {
             return $this->json(['error' => 'Task not found'], 404);
         }
@@ -58,7 +59,7 @@ class TaskController extends AbstractController
     }
 
     #[Route('', name: 'api_tasks_create', methods: ['POST'])]
-    public function create(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, ProjectRepository $projectRepository, EntityManagerInterface $em): JsonResponse
+    public function create(#[CurrentUser] $user, Request $request, SerializerInterface $serializer, ValidatorInterface $validator, ProjectRepository $projectRepository, EntityManagerInterface $em): JsonResponse
     {
         try {
             $data = $serializer->deserialize($request->getContent(), CreateTaskDTO::class, 'json');
@@ -73,7 +74,7 @@ class TaskController extends AbstractController
             return $this->json(['errors' => $violations], 400);
         }
 
-        $project = $projectRepository->find($data->projectId);
+        $project = $projectRepository->findOneBy(['id' => $data->projectId, 'owner' => $user]);
         if ($project === null) {
             return $this->json(['error' => 'Project not found'], 404);
         }
@@ -90,9 +91,9 @@ class TaskController extends AbstractController
     }
 
     #[Route('/{id}', requirements: ['id' => '\d+'], name: 'api_tasks_edit', methods: ['PUT'])]
-    public function edit(int $id, Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator, TaskRepository $taskRepository): JsonResponse
+    public function edit(int $id, #[CurrentUser] $user, Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator, TaskRepository $taskRepository): JsonResponse
     {
-        $task = $taskRepository->find($id);
+        $task = $taskRepository->findOneByOwner($user, $id);
         if ($task == null) {
             return $this->json(['error' => 'Task not found'], 404);
         }
@@ -124,9 +125,9 @@ class TaskController extends AbstractController
     }
 
     #[Route('/{id}', requirements: ['id' => '\d+'], name: 'api_tasks_delete', methods: ['DELETE'])]
-    public function delete(int $id, TaskRepository $taskRepository, EntityManagerInterface $em): JsonResponse
+    public function delete(int $id, #[CurrentUser] $user, TaskRepository $taskRepository, EntityManagerInterface $em): JsonResponse
     {
-        $task = $taskRepository->find($id);
+        $task = $taskRepository->findOneByOwner($user, $id);
         if ($task == null) {
             return $this->json(['error' => 'Task not found'], status: 404);
         }

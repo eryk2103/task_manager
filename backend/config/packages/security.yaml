@@ -12,23 +12,25 @@ security:
                 property: email
 
     firewalls:
-        dev:
-            # Ensure dev tools and static assets are always allowed
-            pattern: ^/(_profiler|_wdt|assets|build)/
-            security: false
-
         login:
-            pattern: ^/api/login
+            pattern: ^/api/(login|regsiter)
             stateless: true
             json_login:
                 check_path: /api/login
+                username_path: email
+                password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-
+        
         api:
             pattern:   ^/api
             stateless: true
             jwt: ~
+
+        dev:
+            # Ensure dev tools and static assets are always allowed
+            pattern: ^/(_profiler|_wdt|assets|build)/
+            security: false
 
     # Note: Only the *first* matching rule is applied
     access_control:

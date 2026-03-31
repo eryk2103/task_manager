@@ -16,7 +16,7 @@ class ProjectRepository extends ServiceEntityRepository
         parent::__construct($registry, Project::class);
     }
 
-    public function searchByName($value): array
+    public function searchByName($value, $user): array
     {
         $qb = $this->createQueryBuilder('p');
 
@@ -24,6 +24,9 @@ class ProjectRepository extends ServiceEntityRepository
             $qb->andWhere('p.name LIKE :val')
                 ->setParameter('val', '%' . $value . '%');
         }
+
+        $qb->andWhere('p.owner = :owner')
+            ->setParameter('owner', $user);
 
         return $qb->orderBy('p.id', 'ASC')
             ->getQuery()
