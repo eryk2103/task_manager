@@ -24,20 +24,25 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class TaskController extends AbstractController
 {
     #[Route('', name: 'api_tasks_get_all', methods: ['GET'])]
-    public function getAll(TaskRepository $taskRepository, Request $request): JsonResponse
+    public function getAll(TaskRepository $taskRepository, Request $request, ProjectRepository $projectRepository): JsonResponse
     {
-        $project = $request->query->get('project');
-        if ($project !== null && !ctype_digit($project)) {
-            return $this->json(['error' => 'Invalid project id'], 400);
-        }
-
-        $projectId = $project !== null ? (int) $project : null;
+        $projectId = $request->query->get('project');
 
         if ($projectId !== null) {
-            $tasks = $taskRepository->findBy(['project' => $projectId]);
+            if (!ctype_digit($projectId)) {
+                return $this->json(['error' => 'Invalid project id'], 400);
+            }
+
+            $project = $projectRepository->find($projectId);
+            if ($project === null) {
+                return $this->json(['error' => 'Project not found'], 404);
+            }
+
+            $tasks = $taskRepository->findBy(['project' => $project->getId()]);
         } else {
             $tasks = $taskRepository->findAll();
         }
+
         return $this->json(array_map(fn(Task $item) => $this->mapToTaskDTO($item), $tasks), 200);
     }
 
