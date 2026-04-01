@@ -1,11 +1,12 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ProjectService } from '../project.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Project } from '../project.model';
+import { TasksPage } from "../../tasks/tasks-page/tasks-page.component";
 
 @Component({
   selector: 'app-project-detail-page',
-  imports: [],
+  imports: [RouterLink, TasksPage],
   templateUrl: './project-detail-page.component.html',
   styleUrl: './project-detail-page.component.css',
 })

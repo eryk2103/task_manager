@@ -13,11 +13,11 @@ export class AuthService {
   private authCheck$?: Observable<boolean>;
 
   login(email: string, password: string) {
-    return this.http.post(this.apiUrl + "login", { username: email, password }, { withCredentials: true });
+    return this.http.post(this.apiUrl + "login", { email, password }, { withCredentials: true });
   }
 
   register(email: string, password: string) {
-    return this.http.post(this.apiUrl + "register", { username: email, password }, { withCredentials: true });
+    return this.http.post(this.apiUrl + "register", { email, password }, { withCredentials: true });
   }
 
   logout() {

@@ -1,0 +1,7 @@
+<ul>
+    @for (project of tasks$|async; track project.id) {
+    <li class="p-3 my-2 bg-gray-800 rounded cursor-pointer hover:bg-gray-700 flex">
+        <div class="flex-1">{{ project.name }}</div>
+    </li>
+    }
+</ul>

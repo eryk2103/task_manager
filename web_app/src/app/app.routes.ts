@@ -5,6 +5,7 @@ import { ProjectDetailPage } from './features/projects/project-detail-page/proje
 import { Login } from './features/auth/login/login.component';
 import { Register } from './features/auth/register/register.component';
 import { authGuard } from './features/auth/auth.guard';
+import { NewTaskPage } from './features/tasks/new-task-page/new-task-page.component';
 
 
 export const routes: Routes = [
@@ -23,6 +24,10 @@ export const routes: Routes = [
             {
                 path: 'projects/:id',
                 component: ProjectDetailPage
+            },
+            {
+                path: 'projects/:id/tasks/new',
+                component: NewTaskPage
             }
         ]
     },
