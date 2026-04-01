@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { RouterOutlet, Router } from '@angular/router';
+import { RouterOutlet, Router, RouterLink } from '@angular/router';
 import { AuthService } from './features/auth/auth.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, RouterLink],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -18,6 +18,6 @@ export class App {
         this.router.navigateByUrl('/login');
         this.authService.clearCache();
       }
-    })
+    });
   }
 }

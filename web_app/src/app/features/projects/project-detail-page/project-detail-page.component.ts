@@ -3,10 +3,11 @@ import { ProjectService } from '../project.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Project } from '../project.model';
 import { TasksPage } from "../../tasks/tasks-page/tasks-page.component";
+import { MatButton } from "@angular/material/button";
 
 @Component({
   selector: 'app-project-detail-page',
-  imports: [RouterLink, TasksPage],
+  imports: [RouterLink, TasksPage, MatButton],
   templateUrl: './project-detail-page.component.html',
   styleUrl: './project-detail-page.component.css',
 })

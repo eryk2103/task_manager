@@ -1,7 +1,9 @@
-<button class="py-2 px-4 rounded bg-blue-600 cursor-pointer hover:bg-blue-700" routerLink="/projects/new">New
-  project</button>
-<div class="my-5">
-  <input type="text" placeholder="Search..." [(ngModel)]="search"
-    class="w-full p-2 rounded bg-gray-800 text-gray-100 placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500" />
+<div class="header">
+  <h2 class="title">Projects</h2>
+  <button matButton="filled" routerLink="/projects/new">New project</button>
 </div>
+<mat-form-field appearance="outline" class="search">
+  <mat-label>Search</mat-label>
+  <input matInput [(ngModel)]="search" />
+</mat-form-field>
 <app-projects [query]="search" />

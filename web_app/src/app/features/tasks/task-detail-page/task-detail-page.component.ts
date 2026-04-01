@@ -3,10 +3,15 @@ import { TaskService } from '../task.service';
 import { ActivatedRoute } from '@angular/router';
 import { Task, UpdateTask } from '../task.model';
 import { FormsModule } from '@angular/forms';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatOption, MatSelect } from '@angular/material/select';
+import { MatButton } from '@angular/material/button';
+import { MatDivider } from "@angular/material/divider";
+import { MatList, MatListItem } from '@angular/material/list';
 
 @Component({
   selector: 'app-task-detail-page',
-  imports: [FormsModule],
+  imports: [FormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatButton, MatDivider, MatList, MatListItem],
   templateUrl: './task-detail-page.component.html',
   styleUrl: './task-detail-page.component.css',
 })

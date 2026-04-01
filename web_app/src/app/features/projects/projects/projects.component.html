@@ -1,7 +1,6 @@
-<ul>
+<mat-action-list>
     @for (project of projects$|async; track project.id) {
-    <li class="p-3 my-2 bg-gray-800 rounded cursor-pointer hover:bg-gray-700" [routerLink]="['/projects/', project.id]">
-        {{ project.name }}
-    </li>
+    <button mat-list-item [routerLink]="['/projects/', project.id]">{{ project.name }}</button>
+    <mat-divider></mat-divider>
     }
-</ul>
+</mat-action-list>

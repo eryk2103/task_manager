@@ -1,22 +1,23 @@
-import { Component, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { TaskService } from '../task.service';
 import { Task } from '../task.model';
-import { AsyncPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatOption, MatSelect } from '@angular/material/select';
+import { MatActionList, MatListItem } from '@angular/material/list';
 
 @Component({
   selector: 'app-tasks',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, MatFormField, MatLabel, MatSelect, MatOption, MatActionList, MatListItem],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.css',
 })
 export class Tasks implements OnInit {
   private taskService = inject(TaskService);
   private route = inject(ActivatedRoute);
-  allowedStatus = ['IDEA', 'TODO', 'IN_PROGRESS', 'DONE']
 
-  status = this.allowedStatus[0];
+  status = 'IDEA';
   tasks = signal<Task[]>([]);
 
   projectId = Number(this.route.snapshot.paramMap.get('id'));

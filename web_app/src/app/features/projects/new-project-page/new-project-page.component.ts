@@ -3,10 +3,13 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ProjectService } from '../project.service';
 import { CreateProject } from '../project.model';
 import { Router, RouterLink } from '@angular/router';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-new-project-page',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, MatFormField, MatInput, MatError, MatButton, MatLabel],
   templateUrl: './new-project-page.component.html',
   styleUrl: './new-project-page.component.css',
 })

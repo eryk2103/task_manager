@@ -1,14 +1,16 @@
-<select [(ngModel)]="status" (change)="onStatusChange()" class="mt-5 block w-full px-4 py-2 rounded-lg
-    bg-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-    <option selected value="IDEA">idea</option>
-    <option value="TODO">to do</option>
-    <option value="IN_PROGRESS">in progress</option>
-    <option value="Done">done</option>
-</select>
-<ul>
+<mat-form-field appearance="outline">
+    <mat-label>Status</mat-label>
+    <mat-select [(ngModel)]="status" (selectionChange)="onStatusChange()">
+        <mat-option selected value="IDEA">idea</mat-option>
+        <mat-option value="TODO">to do</mat-option>
+        <mat-option value="IN_PROGRESS">in progress</mat-option>
+        <mat-option value="Done">done</mat-option>
+    </mat-select>
+</mat-form-field>
+<mat-action-list>
     @for (task of tasks(); track task.id) {
-    <li class="p-3 my-2 bg-gray-800 rounded cursor-pointer hover:bg-gray-700 flex" [routerLink]="['/tasks/', task.id]">
-        <div class="flex-1">{{ task.name }}</div>
-    </li>
+    <button mat-list-item [routerLink]="['/tasks/', task.id]">
+        {{ task.name }}
+    </button>
     }
-</ul>
+</mat-action-list>

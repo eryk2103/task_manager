@@ -1,13 +1,14 @@
-import { Component, inject, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { ProjectService } from '../project.service';
 import { Project } from '../project.model';
 import { BehaviorSubject, debounceTime, distinctUntilChanged, Observable, switchMap } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { RouterLink } from "@angular/router";
+import { MatActionList, MatDivider, MatListItem } from '@angular/material/list';
 
 @Component({
   selector: 'app-projects',
-  imports: [AsyncPipe, RouterLink],
+  imports: [AsyncPipe, RouterLink, MatActionList, MatListItem, MatDivider],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.css',
 })

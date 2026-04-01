@@ -3,10 +3,13 @@ import { FormControl, FormGroup, Validators, ɵInternalFormsSharedModule, Reacti
 import { TaskService } from '../task.service';
 import { CreateTask } from '../task.model';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-new-task-page',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, MatFormField, MatLabel, MatInput, MatButton, MatError],
   templateUrl: './new-task-page.component.html',
   styleUrl: './new-task-page.component.css',
 })
