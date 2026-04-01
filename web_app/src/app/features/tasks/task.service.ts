@@ -11,8 +11,8 @@ export class TaskService {
 
   constructor(private http: HttpClient) { }
 
-  getAll(projectId: number): Observable<Task[]> {
-    return this.http.get<Task[]>(this.apiUrl, { params: { project: projectId } });
+  getAll(projectId: number, status: string = ''): Observable<Task[]> {
+    return this.http.get<Task[]>(this.apiUrl, { params: { project: projectId, status: status } });
   }
 
   getById(id: number): Observable<Task> {

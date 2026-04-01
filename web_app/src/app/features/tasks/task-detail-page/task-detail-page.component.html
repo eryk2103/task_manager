@@ -1,0 +1,12 @@
+<h3>{{task().name}}</h3>
+<div>status: {{ task().status }}</div>
+<form (ngSubmit)="onStatusChange()">
+    <select [(ngModel)]="status" name="status" class="mt-5 block w-full px-4 py-2 rounded-lg
+    bg-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <option value="IDEA">idea</option>
+        <option value="TODO">to do</option>
+        <option value="IN_PROGRESS">in progress</option>
+        <option value="Done">done</option>
+    </select>
+    <button type="submit" class="bg-blue-500 cursor-pointer">Change</button>
+</form>
