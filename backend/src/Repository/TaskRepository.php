@@ -16,15 +16,20 @@ class TaskRepository extends ServiceEntityRepository
         parent::__construct($registry, Task::class);
     }
 
-    public function findByOwner($user): array
+    public function findByOwner($user, $status = ''): array
     {
-        return $this->createQueryBuilder('t')
+        $qb = $this->createQueryBuilder('t')
             ->innerJoin('t.project', 'p')
             ->andWhere("p.owner = :user")
-            ->setParameter('user', $user)
-            ->getQuery()
-            ->getResult()
-        ;
+            ->setParameter('user', $user);
+
+        if ($status != '') {
+            $qb = $qb->andWhere("t.status = :status")
+                ->setParameter('status', strtoupper($status));
+        }
+
+        return $qb->getQuery()
+            ->getResult();
     }
 
     public function findOneByOwner($user, $id): ?Task
@@ -40,17 +45,22 @@ class TaskRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByOwnerAndProject($user, $project): array
+    public function findByOwnerAndProject($user, $project, $status = ''): array
     {
-        return $this->createQueryBuilder('t')
+        $qb = $this->createQueryBuilder('t')
             ->innerJoin('t.project', 'p')
             ->andWhere("p.owner = :user")
             ->setParameter('user', $user)
             ->andWhere("p = :project")
-            ->setParameter('project', $project)
-            ->getQuery()
-            ->getResult()
-        ;
+            ->setParameter('project', $project);
+
+        if ($status != '') {
+            $qb = $qb->andWhere("t.status = :status")
+                ->setParameter('status', strtoupper($status));
+        }
+
+        return $qb->getQuery()
+            ->getResult();;
     }
 
     //    /**

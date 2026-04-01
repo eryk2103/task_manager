@@ -28,10 +28,14 @@ class TaskController extends AbstractController
     public function getAll(#[CurrentUser()] $user, TaskRepository $taskRepository, Request $request, ProjectRepository $projectRepository): JsonResponse
     {
         $projectId = $request->query->get('project');
+        $status = $request->query->get('status', '');
 
         if ($projectId !== null) {
             if (!ctype_digit($projectId)) {
                 return $this->json(['error' => 'Invalid project id'], 400);
+            }
+            if ($status !== '' && TaskStatus::tryFrom(strtoupper($status)) === null) {
+                return $this->json(['error' => 'Invalid status type'], 400);
             }
 
             $project = $projectRepository->findOneBy(['id' => $projectId, 'owner' => $user]);
@@ -39,9 +43,9 @@ class TaskController extends AbstractController
                 return $this->json(['error' => 'Project not found'], 404);
             }
 
-            $tasks = $taskRepository->findByOwnerAndProject($user, $project);
+            $tasks = $taskRepository->findByOwnerAndProject($user, $project, $status);
         } else {
-            $tasks = $taskRepository->findByOwner($user);
+            $tasks = $taskRepository->findByOwner($user, $status);
         }
 
         return $this->json(array_map(fn(Task $item) => $this->mapToTaskDTO($item), $tasks), 200);
