@@ -1,12 +1,7 @@
-<h3 class="title task__title">Task overview</h3>
-<mat-list role="list">
-    <mat-list-item role="listitem">Name: {{ task().name }}</mat-list-item>
-    <mat-divider></mat-divider>
-    <mat-list-item role="listitem">Status: {{ task().status }}</mat-list-item>
-</mat-list>
-<h2 class="title task__title">Status</h2>
-<form (ngSubmit)="onStatusChange()" class="status-change">
-    <mat-form-field appearance="outline">
+<h1 class="h1 mb-3">Task overview</h1>
+<h3 class="h3 mb-3">{{ task().name }}</h3>
+<form (ngSubmit)="onStatusChange()">
+    <mat-form-field appearance="outline" class="w-full">
         <mat-label>Status</mat-label>
         <mat-select [(ngModel)]="status" name="status">
             <mat-option selected value="IDEA">idea</mat-option>
@@ -15,5 +10,5 @@
             <mat-option value="Done">done</mat-option>
         </mat-select>
     </mat-form-field>
-    <button type="submit" matButton="outlined">Change</button>
+    <button type="submit" matButton="outlined">Save changes</button>
 </form>

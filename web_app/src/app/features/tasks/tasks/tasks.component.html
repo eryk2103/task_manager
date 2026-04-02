@@ -1,4 +1,4 @@
-<mat-form-field appearance="outline">
+<mat-form-field appearance="outline" class="w-full">
     <mat-label>Status</mat-label>
     <mat-select [(ngModel)]="status" (selectionChange)="onStatusChange()">
         <mat-option selected value="IDEA">idea</mat-option>
@@ -12,5 +12,6 @@
     <button mat-list-item [routerLink]="['/tasks/', task.id]">
         {{ task.name }}
     </button>
+    <mat-divider></mat-divider>
     }
 </mat-action-list>

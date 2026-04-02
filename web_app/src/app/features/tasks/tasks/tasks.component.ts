@@ -5,11 +5,11 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
-import { MatActionList, MatListItem } from '@angular/material/list';
+import { MatActionList, MatListItem, MatDivider } from '@angular/material/list';
 
 @Component({
   selector: 'app-tasks',
-  imports: [FormsModule, RouterLink, MatFormField, MatLabel, MatSelect, MatOption, MatActionList, MatListItem],
+  imports: [FormsModule, RouterLink, MatFormField, MatLabel, MatSelect, MatOption, MatActionList, MatListItem, MatDivider],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.css',
 })
