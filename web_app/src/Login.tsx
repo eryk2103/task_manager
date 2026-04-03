@@ -1,9 +1,11 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Button, FormControl, IconButton, InputAdornment, InputLabel, Link, OutlinedInput, Stack, TextField, Typography } from "@mui/material";
-import { useState, type SubmitEvent, type MouseEvent } from "react";
+import { Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, Link, OutlinedInput, Stack, TextField, Typography } from "@mui/material";
+import { useState, type MouseEvent } from "react";
+import { useForm } from "react-hook-form";
 import { Link as RouterLink } from "react-router";
 
 export default function Login() {
+    const { register, handleSubmit, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -16,22 +18,23 @@ export default function Login() {
         event.preventDefault();
     };
 
-    function handleSubmit(event: SubmitEvent<HTMLFormElement>): void {
-        event.preventDefault();
-        console.log('sign in')
+    function onSubmit(data: any): void {
+        console.log(data)
     }
 
     return (
         <Stack spacing={3}>
             <Typography variant="h4">Sign in</Typography>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)} noValidate>
                 <Stack spacing={3}>
-                    <TextField id="email" label="Email" variant="outlined" type="email" />
-                    <FormControl sx={{ m: 1 }} variant="outlined">
+                    <TextField id="email" label="Email" variant="outlined" type="email" {...register("email", { required: "Email is required" })} error={!!errors.email}
+                        helperText={errors.email?.message as string} />
+                    <FormControl sx={{ m: 1 }} variant="outlined" error={!!errors.password}>
                         <InputLabel htmlFor="password">Password</InputLabel>
                         <OutlinedInput
                             id="password"
                             type={showPassword ? 'text' : 'password'}
+                            {...register("password", { required: "Password is required" })}
                             endAdornment={
                                 <InputAdornment position="end">
                                     <IconButton
@@ -49,8 +52,9 @@ export default function Login() {
                             }
                             label="Password"
                         />
+                        <FormHelperText id="password">{errors.password?.message as string}</FormHelperText>
                     </FormControl>
-                    <Button variant="contained" size="large">Sign in</Button>
+                    <Button variant="contained" size="large" type="submit">Sign in</Button>
                 </Stack>
             </form>
             <Link component={RouterLink} to='/register'>Don't have an account? Sign up here.</Link>
