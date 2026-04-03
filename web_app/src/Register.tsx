@@ -1,5 +1,5 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, Link, OutlinedInput, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, Link, OutlinedInput, Stack, TextField, Typography } from "@mui/material";
 import { useState, type SubmitEvent, type MouseEvent } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink, useNavigate } from "react-router";
@@ -12,7 +12,6 @@ export default function Register() {
     const [showPassword2, setShowPassword2] = useState(false);
     const { register: authRegister } = useAuth();
     const [error, setError] = useState('');
-    const navigate = useNavigate();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleClickShowPassword2 = () => setShowPassword2((show) => !show);
@@ -41,6 +40,9 @@ export default function Register() {
 
     return (
         <Stack spacing={3}>
+            {error && <Alert severity="error">
+                {error}
+            </Alert>}
             <Typography variant="h4">Sign up</Typography>
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
                 <Stack spacing={3}>
