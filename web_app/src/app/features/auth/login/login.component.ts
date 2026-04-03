@@ -6,10 +6,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatButton } from '@angular/material/button';
+import { Alert } from "../../../shared/alert/alert.component";
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatIconModule, MatButton],
+  imports: [ReactiveFormsModule, RouterLink, MatFormFieldModule, MatInputModule, MatIconModule, MatButton, Alert],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -41,5 +42,14 @@ export class Login {
     this.authService.login(email, password).subscribe({
       next: () => this.router.navigateByUrl('/')
     })
+  }
+
+  logout() {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigateByUrl('/login');
+        this.authService.clearCache();
+      }
+    });
   }
 }

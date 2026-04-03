@@ -1,23 +1,22 @@
 import { Component, inject, signal } from '@angular/core';
 import { TaskService } from '../task.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Task, UpdateTask } from '../task.model';
 import { FormsModule } from '@angular/forms';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { MatButton } from '@angular/material/button';
-import { MatDivider } from "@angular/material/divider";
-import { MatList, MatListItem } from '@angular/material/list';
 
 @Component({
   selector: 'app-task-detail-page',
-  imports: [FormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatButton, MatDivider, MatList, MatListItem],
+  imports: [FormsModule, MatFormField, MatLabel, MatSelect, MatOption, MatButton],
   templateUrl: './task-detail-page.component.html',
   styleUrl: './task-detail-page.component.css',
 })
 export class TaskDetailPage {
   taskService = inject(TaskService);
   route = inject(ActivatedRoute);
+  router = inject(Router);
 
   task = signal<Task>(<Task>{ id: 0, name: '', status: '' });
   status = signal<string>('');
@@ -44,7 +43,7 @@ export class TaskDetailPage {
     }
 
     this.taskService.update(this.task().id, task).subscribe({
-      next: () => this.loadData(),
+      next: () => this.router.navigate(['/projects', this.task().projectId]),
       error: (err) => console.error(err)
     });
   }
