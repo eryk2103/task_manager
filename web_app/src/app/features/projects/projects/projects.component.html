@@ -1,9 +1,0 @@
-<mat-action-list>
-    @for (project of projects$|async; track project.id) {
-    <button mat-list-item [routerLink]="['/projects/', project.id]">{{ project.name }}</button>
-    <mat-divider></mat-divider>
-    }
-    @empty {
-    <div>No projects found</div>
-    }
-</mat-action-list>

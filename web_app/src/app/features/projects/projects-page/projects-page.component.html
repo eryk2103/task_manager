@@ -1,9 +1,0 @@
-<div class="header">
-  <h1>Projects</h1>
-  <button matButton="filled" routerLink="/projects/new">New project</button>
-</div>
-<mat-form-field appearance="outline" class="search">
-  <mat-label>Search</mat-label>
-  <input matInput [(ngModel)]="search" />
-</mat-form-field>
-<app-projects [query]="search" />
