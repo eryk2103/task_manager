@@ -2,12 +2,17 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, Link, OutlinedInput, Stack, TextField, Typography } from "@mui/material";
 import { useState, type SubmitEvent, type MouseEvent } from "react";
 import { useForm } from "react-hook-form";
-import { Link as RouterLink } from "react-router";
+import { Link as RouterLink, useNavigate } from "react-router";
+import { useAuth } from "./authContext";
+import { BadRequest, Conflict } from "./errors";
 
 export default function Register() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
+    const { register: authRegister } = useAuth();
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleClickShowPassword2 = () => setShowPassword2((show) => !show);
@@ -21,7 +26,17 @@ export default function Register() {
     };
 
     function onSubmit(data: any): void {
-        console.log(data);
+        authRegister(data.email, data.password).catch(err => {
+            if (err instanceof BadRequest) {
+                setError("Invalid data");
+            }
+            else if (err instanceof Conflict) {
+                setError("Email already exists");
+            }
+            else {
+                setError("Something went wrong");
+            }
+        })
     }
 
     return (

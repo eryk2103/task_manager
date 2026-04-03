@@ -1,12 +1,17 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, Link, OutlinedInput, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, Link, OutlinedInput, Stack, TextField, Typography } from "@mui/material";
 import { useState, type MouseEvent } from "react";
 import { useForm } from "react-hook-form";
-import { Link as RouterLink } from "react-router";
+import { Link as RouterLink, useNavigate } from "react-router";
+import { useAuth } from "./authContext";
+import { Unauthorized } from "./errors";
 
 export default function Login() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
+    const { login } = useAuth();
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -19,11 +24,25 @@ export default function Login() {
     };
 
     function onSubmit(data: any): void {
-        console.log(data)
+        login(data.email, data.password)
+            .then(() => {
+                navigate("/");
+            })
+            .catch(err => {
+                if (err instanceof Unauthorized) {
+                    setError('Invalid credentials');
+                }
+                else {
+                    setError('Something went wrong');
+                }
+            });
     }
 
     return (
         <Stack spacing={3}>
+            {error && <Alert severity="error">
+                {error}
+            </Alert>}
             <Typography variant="h4">Sign in</Typography>
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
                 <Stack spacing={3}>

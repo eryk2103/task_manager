@@ -9,20 +9,23 @@ import ProjectTasks from './ProjectTasks'
 import TaskDetail from './TaskDetail'
 import Login from './Login'
 import Register from './Register'
+import { AuthProvider } from './authContext'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <CssBaseline />
     <BrowserRouter>
-      <Routes>
-        <Route element={<AppLayout />}>
-          <Route index element={<Projects />} />
-          <Route path='/project/:id' element={<ProjectTasks />} />
-          <Route path='/task/:id' element={<TaskDetail />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/register' element={<Register />} />
-        </Route>
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route element={<AppLayout />}>
+            <Route index element={<Projects />} />
+            <Route path='/project/:id' element={<ProjectTasks />} />
+            <Route path='/task/:id' element={<TaskDetail />} />
+            <Route path='/login' element={<Login />} />
+            <Route path='/register' element={<Register />} />
+          </Route>
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
 )
