@@ -1,6 +1,7 @@
-import { Box, Divider, List, ListItem, ListItemButton, ListItemText, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Breadcrumbs, Button, Divider, Link, List, ListItem, ListItemButton, ListItemText, Stack, Tab, Tabs, Typography } from "@mui/material";
 import { Fragment, useState } from "react";
-import { Link } from "react-router";
+import { Link as RouterLink } from "react-router";
+
 type Task = {
     id: number;
     name: string;
@@ -64,9 +65,19 @@ export default function ProjectTasks() {
 
     return (
         <Stack spacing={2}>
+            <Breadcrumbs aria-label="breadcrumb">
+                <Link underline="hover" color="inherit" component={RouterLink} to="/">
+                    Projects
+                </Link>
+                <Typography sx={{ color: 'text.primary' }}>Tasks</Typography>
+            </Breadcrumbs>
             <Box>
                 <Typography variant="h4">{project.name}</Typography>
                 <Typography variant="body1">{project.description}</Typography>
+                <Stack spacing={2} direction="row" mt={2}>
+                    <Button variant="outlined" color="primary">Edit</Button>
+                    <Button variant="outlined" color="error">Delete</Button>
+                </Stack>
             </Box>
             <Divider />
             <Box>
@@ -84,7 +95,7 @@ export default function ProjectTasks() {
                     {tasks[status].map((task, index) =>
                         <Fragment key={task.id}>
                             <ListItem disablePadding>
-                                <ListItemButton component={Link} to={`/task/${task.id}`}>
+                                <ListItemButton component={RouterLink} to={`/task/${task.id}`}>
                                     <ListItemText primary={task.name} />
                                 </ListItemButton>
                             </ListItem>
