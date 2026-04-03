@@ -95,11 +95,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const logout = (): Promise<void> => {
-        return fetch("https://localhost:8000/logout", {
+        return fetch("https://localhost:8000/api/logout", {
             method: "POST",
             credentials: "include",
         }).then(res => {
             if (!res.ok) {
+                if (res.status === 401) {
+                    throw new Unauthorized("You are already logged out");
+                }
                 throw new Error('Something went wrong')
             }
             else {
