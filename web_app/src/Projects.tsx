@@ -1,15 +1,28 @@
 import { Box, Button, CircularProgress, Divider, List, ListItem, ListItemButton, ListItemText, Stack, TextField, Typography } from "@mui/material";
 import { Fragment, useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import AddIcon from '@mui/icons-material/Add';
 import type { Project } from "./models";
 
 export default function Projects() {
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
-        fetch(import.meta.env.VITE_API_URL + "/projects", {
+        const handler = setTimeout(() => {
+            setDebouncedSearch(search);
+        }, 500);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [search])
+
+    useEffect(() => {
+        fetch(import.meta.env.VITE_API_URL + "/projects?search=" + search, {
             method: "get",
             credentials: "include",
         }).then(res => {
@@ -19,17 +32,17 @@ export default function Projects() {
         }).finally(() => {
             setLoading(false);
         })
-    }, []);
+    }, [debouncedSearch]);
 
     return (
         <Stack spacing={2}>
             <Stack direction="row" justifyContent="space-between">
                 <Typography variant="h4">Projects</Typography>
-                <Button variant="outlined" startIcon={<AddIcon />}>
+                <Button variant="outlined" startIcon={<AddIcon />} onClick={() => navigate('/project/new')}>
                     New
                 </Button>
             </Stack>
-            <TextField id="search" label="Search" variant="outlined" disabled={loading} />
+            <TextField id="search" label="Search" variant="outlined" disabled={loading} onChange={(e) => setSearch(e.target.value)} />
             {loading ? <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
                 <CircularProgress />
             </Box> : <>
