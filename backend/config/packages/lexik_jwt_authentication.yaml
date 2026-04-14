@@ -14,5 +14,5 @@ lexik_jwt_authentication:
             lifetime: 3600
             samesite: lax
             path: /
-            secure: true
+            secure: false
             httpOnly: true
