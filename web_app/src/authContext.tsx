@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch("https://localhost:8000/api/me", {
+        fetch(import.meta.env.VITE_API_URL + '/me', {
             method: "GET",
             credentials: "include",
         })
@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     const login = (email: string, password: string): Promise<void> => {
-        return fetch("https://localhost:8000/api/login", {
+        return fetch(import.meta.env.VITE_API_URL + '/login', {
             method: "POST",
             credentials: "include",
             headers: {
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const register = (email: string, password: string): Promise<void> => {
-        return fetch("https://localhost:8000/api/register", {
+        return fetch(import.meta.env.VITE_API_URL + '/register', {
             method: "POST",
             credentials: "include",
             headers: {
@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const logout = (): Promise<void> => {
-        return fetch("https://localhost:8000/api/logout", {
+        return fetch(import.meta.env.VITE_API_URL + '/logout', {
             method: "POST",
             credentials: "include",
         }).then(res => {
