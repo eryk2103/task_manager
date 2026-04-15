@@ -17,7 +17,7 @@ import EditProject from './EditProject'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <CssBaseline />
-    <BrowserRouter>
+    <BrowserRouter basename='/task-manager'>
       <AuthProvider>
         <Routes>
           <Route element={<AppLayout />}>
