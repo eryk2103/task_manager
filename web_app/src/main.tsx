@@ -12,6 +12,7 @@ import Register from './Register'
 import { AuthProvider } from './authContext'
 import Newproject from './NewProject'
 import NewTask from './NewTask'
+import EditProject from './EditProject'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -27,6 +28,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path='/register' element={<Register />} />
             <Route path='/project/new' element={<Newproject />} />
             <Route path='/project/:id/new-task' element={<NewTask />} />
+            <Route path='/project/:id/edit' element={<EditProject />} />
           </Route>
         </Routes>
       </AuthProvider>

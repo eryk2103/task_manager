@@ -56,7 +56,7 @@ export default function ProjectTasks() {
                 <Typography variant="h4">{project?.name}</Typography>
                 <Typography variant="body1">{project?.description}</Typography>
                 <Stack spacing={2} direction="row" mt={2}>
-                    <Button variant="outlined" color="primary">Edit</Button>
+                    <Button variant="outlined" color="primary" onClick={() => { navigate(`/project/${id}/edit`) }}>Edit</Button>
                     <Button variant="outlined" color="error">Delete</Button>
                 </Stack>
             </Box>
