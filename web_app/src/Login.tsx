@@ -39,45 +39,47 @@ export default function Login() {
     }
 
     return (
-        <Stack spacing={3}>
-            {error && <Alert severity="error">
-                {error}
-            </Alert>}
-            <Typography variant="h4">Sign in</Typography>
-            <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                <Stack spacing={3}>
-                    <TextField id="email" label="Email" variant="outlined" type="email" {...register("email", { required: "Email is required" })} error={!!errors.email}
-                        helperText={errors.email?.message as string} autoComplete="email" />
-                    <FormControl sx={{ m: 1 }} variant="outlined" error={!!errors.password}>
-                        <InputLabel htmlFor="password">Password</InputLabel>
-                        <OutlinedInput
-                            id="password"
-                            autoComplete="current-password"
-                            type={showPassword ? 'text' : 'password'}
-                            {...register("password", { required: "Password is required" })}
-                            endAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label={
-                                            showPassword ? 'hide the password' : 'display the password'
-                                        }
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                        onMouseUp={handleMouseUpPassword}
-                                        edge="end"
-                                    >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                            }
-                            label="Password"
-                        />
-                        <FormHelperText id="password">{errors.password?.message as string}</FormHelperText>
-                    </FormControl>
-                    <Button variant="contained" size="large" type="submit">Sign in</Button>
-                </Stack>
-            </form>
-            <Link component={RouterLink} to='/register'>Don't have an account? Sign up here.</Link>
+        <Stack direction="row" justifyContent="center">
+            <Stack spacing={3} width={{ xs: '100%', md: 700 }}>
+                {error && <Alert severity="error">
+                    {error}
+                </Alert>}
+                <Typography variant="h4">Sign in</Typography>
+                <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <Stack spacing={3}>
+                        <TextField id="email" label="Email" variant="outlined" type="email" {...register("email", { required: "Email is required" })} error={!!errors.email}
+                            helperText={errors.email?.message as string} autoComplete="email" />
+                        <FormControl sx={{ m: 1 }} variant="outlined" error={!!errors.password}>
+                            <InputLabel htmlFor="password">Password</InputLabel>
+                            <OutlinedInput
+                                id="password"
+                                autoComplete="current-password"
+                                type={showPassword ? 'text' : 'password'}
+                                {...register("password", { required: "Password is required" })}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label={
+                                                showPassword ? 'hide the password' : 'display the password'
+                                            }
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                            onMouseUp={handleMouseUpPassword}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                                label="Password"
+                            />
+                            <FormHelperText id="password">{errors.password?.message as string}</FormHelperText>
+                        </FormControl>
+                        <Button variant="contained" size="large" type="submit">Sign in</Button>
+                    </Stack>
+                </form>
+                <Link component={RouterLink} to='/register'>Don't have an account? Sign up here.</Link>
+            </Stack>
         </Stack>
     )
 }

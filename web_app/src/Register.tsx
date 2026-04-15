@@ -39,71 +39,73 @@ export default function Register() {
     }
 
     return (
-        <Stack spacing={3}>
-            {error && <Alert severity="error">
-                {error}
-            </Alert>}
-            <Typography variant="h4">Sign up</Typography>
-            <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                <Stack spacing={3}>
-                    <TextField id="email" label="Email" variant="outlined" type="email" {...register("email", { required: "Email is required" })}
-                        error={!!errors.email} helperText={errors.email?.message as string} autoComplete="email" />
-                    <FormControl sx={{ m: 1 }} variant="outlined" error={!!errors.password}>
-                        <InputLabel htmlFor="password">Password</InputLabel>
-                        <OutlinedInput
-                            id="password"
-                            autoComplete="new-password"
-                            type={showPassword ? 'text' : 'password'}
-                            {...register("password", { required: "Passsword is required" })}
-                            endAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label={
-                                            showPassword ? 'hide the password' : 'display the password'
-                                        }
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                        onMouseUp={handleMouseUpPassword}
-                                        edge="end"
-                                    >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                            }
-                            label="Password"
-                        />
-                        <FormHelperText id="password">{errors.password?.message as string}</FormHelperText>
-                    </FormControl>
-                    <FormControl sx={{ m: 1 }} variant="outlined" error={!!errors.password2}>
-                        <InputLabel htmlFor="password2">Confirm password</InputLabel>
-                        <OutlinedInput
-                            id="password2"
-                            autoComplete="new-password"
-                            type={showPassword2 ? 'text' : 'password'}
-                            {...register("password2", { required: "Confirm password is required" })}
-                            endAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label={
-                                            showPassword2 ? 'hide the password' : 'display the password'
-                                        }
-                                        onClick={handleClickShowPassword2}
-                                        onMouseDown={handleMouseDownPassword}
-                                        onMouseUp={handleMouseUpPassword}
-                                        edge="end"
-                                    >
-                                        {showPassword2 ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
-                            }
-                            label="Confirm password"
-                        />
-                        <FormHelperText id="password2">{errors.password2?.message as string}</FormHelperText>
-                    </FormControl>
-                    <Button variant="contained" size="large" type="submit">Sign up</Button>
-                </Stack>
-            </form>
-            <Link component={RouterLink} to='/login'>Already have an account? Sign in here.</Link>
+        <Stack direction="row" justifyContent="center">
+            <Stack spacing={3} width={{ xs: '100%', md: 700 }}>
+                {error && <Alert severity="error">
+                    {error}
+                </Alert>}
+                <Typography variant="h4">Sign up</Typography>
+                <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <Stack spacing={3}>
+                        <TextField id="email" label="Email" variant="outlined" type="email" {...register("email", { required: "Email is required" })}
+                            error={!!errors.email} helperText={errors.email?.message as string} autoComplete="email" />
+                        <FormControl sx={{ m: 1 }} variant="outlined" error={!!errors.password}>
+                            <InputLabel htmlFor="password">Password</InputLabel>
+                            <OutlinedInput
+                                id="password"
+                                autoComplete="new-password"
+                                type={showPassword ? 'text' : 'password'}
+                                {...register("password", { required: "Passsword is required" })}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label={
+                                                showPassword ? 'hide the password' : 'display the password'
+                                            }
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                            onMouseUp={handleMouseUpPassword}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                                label="Password"
+                            />
+                            <FormHelperText id="password">{errors.password?.message as string}</FormHelperText>
+                        </FormControl>
+                        <FormControl sx={{ m: 1 }} variant="outlined" error={!!errors.password2}>
+                            <InputLabel htmlFor="password2">Confirm password</InputLabel>
+                            <OutlinedInput
+                                id="password2"
+                                autoComplete="new-password"
+                                type={showPassword2 ? 'text' : 'password'}
+                                {...register("password2", { required: "Confirm password is required" })}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label={
+                                                showPassword2 ? 'hide the password' : 'display the password'
+                                            }
+                                            onClick={handleClickShowPassword2}
+                                            onMouseDown={handleMouseDownPassword}
+                                            onMouseUp={handleMouseUpPassword}
+                                            edge="end"
+                                        >
+                                            {showPassword2 ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                                label="Confirm password"
+                            />
+                            <FormHelperText id="password2">{errors.password2?.message as string}</FormHelperText>
+                        </FormControl>
+                        <Button variant="contained" size="large" type="submit">Sign up</Button>
+                    </Stack>
+                </form>
+                <Link component={RouterLink} to='/login'>Already have an account? Sign in here.</Link>
+            </Stack>
         </Stack>
     )
 }
