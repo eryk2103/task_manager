@@ -1,4 +1,4 @@
-import { Breadcrumbs, Button, ButtonGroup, Dialog, DialogActions, DialogTitle, Divider, FormControl, InputLabel, Link, MenuItem, Select, Stack, ToggleButton, ToggleButtonGroup, Typography, type SelectChangeEvent } from "@mui/material";
+import { Breadcrumbs, Button, Dialog, DialogActions, DialogTitle, Divider, Link, Stack, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
 import { type Task } from "./models";
@@ -21,7 +21,7 @@ export default function TaskDetail() {
         })
     }, []);
 
-    const handleStatusChange = (event: React.MouseEvent<HTMLElement>, newValue: string) => {
+    const handleStatusChange = (_event: React.MouseEvent<HTMLElement>, newValue: string) => {
         fetch(import.meta.env.VITE_API_URL + '/tasks/' + id, {
             method: 'put',
             credentials: "include",

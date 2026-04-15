@@ -40,7 +40,7 @@ export default function ProjectTasks() {
 
     }, [status])
 
-    const handleStatusChange = (event: React.SyntheticEvent, newValue: Status) => {
+    const handleStatusChange = (_event: React.SyntheticEvent, newValue: Status) => {
         setStatus(newValue);
     };
 

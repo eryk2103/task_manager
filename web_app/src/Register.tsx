@@ -1,8 +1,8 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Alert, Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, Link, OutlinedInput, Stack, TextField, Typography } from "@mui/material";
-import { useState, type SubmitEvent, type MouseEvent } from "react";
+import { useState, type MouseEvent } from "react";
 import { useForm } from "react-hook-form";
-import { Link as RouterLink, useNavigate } from "react-router";
+import { Link as RouterLink } from "react-router";
 import { useAuth } from "./authContext";
 import { BadRequest, Conflict } from "./errors";
 
