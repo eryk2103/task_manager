@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Unauthorized } from "./errors";
 
 export default function AppLayout() {
-    const { loading, logout } = useAuth();
+    const { loading, logout, user } = useAuth();
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -24,9 +24,11 @@ export default function AppLayout() {
     return (<>
         <Paper square elevation={1} sx={{ px: 2, py: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography variant="h5" color="primary">DevFlow</Typography>
-            <IconButton aria-label="delete" onClick={() => handleLogout()}>
-                <LogoutIcon />
-            </IconButton>
+            {user &&
+                <IconButton aria-label="delete" onClick={() => handleLogout()}>
+                    <LogoutIcon />
+                </IconButton>
+            }
         </Paper>
         {loading ? <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
             <CircularProgress />
