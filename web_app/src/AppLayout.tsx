@@ -23,7 +23,7 @@ export default function AppLayout() {
     }
     return (<>
         <Paper square elevation={1} sx={{ px: 2, py: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h5" color="primary">DevFlow</Typography>
+            <Typography variant="h4" color="primary">DevFlow</Typography>
             {user &&
                 <IconButton aria-label="delete" onClick={() => handleLogout()}>
                     <LogoutIcon />
