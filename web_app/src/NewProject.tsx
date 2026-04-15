@@ -1,4 +1,4 @@
-import { Alert, Breadcrumbs, Button, Link, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Breadcrumbs, Button, Link, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink, useNavigate } from "react-router";
@@ -46,7 +46,9 @@ export default function Newproject() {
                         helperText={errors.name?.message as string} />
                     <TextField id="description" label="Description" variant="outlined" multiline rows={4} {...register("description", { required: "Description is required" })} error={!!errors.description}
                         helperText={errors.description?.message as string} />
-                    <Button variant="contained" type="submit" fullWidth size="large">Submit</Button>
+                    <Box>
+                        <Button variant="contained" type="submit" size="large" sx={{ width: { xs: '100%', sm: 'auto' } }}>Submit</Button>
+                    </Box>
                 </Stack>
             </form>
         </Stack>

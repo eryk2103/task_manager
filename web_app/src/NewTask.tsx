@@ -1,4 +1,4 @@
-import { Alert, Breadcrumbs, Button, Link, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Breadcrumbs, Button, Link, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
@@ -48,7 +48,9 @@ export default function NewTask() {
                 <Stack spacing={3}>
                     <TextField id="name" label="Name" variant="outlined" {...register("name", { required: "Name is required" })} error={!!errors.name}
                         helperText={errors.name?.message as string} />
-                    <Button variant="contained" type="submit" fullWidth size="large">Submit</Button>
+                    <Box>
+                        <Button variant="contained" type="submit" size="large" sx={{ width: { xs: '100%', sm: 'auto' } }}>Submit</Button>
+                    </Box>
                 </Stack>
             </form>
         </Stack>

@@ -1,4 +1,4 @@
-import { Alert, Box, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
+import { Alert, Box, CircularProgress, IconButton, Paper, Stack, Typography } from "@mui/material";
 import { Outlet, useNavigate } from "react-router";
 import { useAuth } from "./authContext";
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -37,7 +37,11 @@ export default function AppLayout() {
                 {error && <Alert severity="error" onClose={() => { setError('') }} sx={{ marginBottom: 2 }}>
                     {error}
                 </Alert>}
-                <Outlet />
+                <Stack direction="row" justifyContent="center">
+                    <Stack spacing={3} width={{ xs: '100%', md: 900 }}>
+                        <Outlet />
+                    </Stack>
+                </Stack>
             </Box>
         }
     </>);
