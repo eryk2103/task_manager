@@ -47,11 +47,12 @@ export default function Login() {
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
                 <Stack spacing={3}>
                     <TextField id="email" label="Email" variant="outlined" type="email" {...register("email", { required: "Email is required" })} error={!!errors.email}
-                        helperText={errors.email?.message as string} />
+                        helperText={errors.email?.message as string} autoComplete="email" />
                     <FormControl sx={{ m: 1 }} variant="outlined" error={!!errors.password}>
                         <InputLabel htmlFor="password">Password</InputLabel>
                         <OutlinedInput
                             id="password"
+                            autoComplete="current-password"
                             type={showPassword ? 'text' : 'password'}
                             {...register("password", { required: "Password is required" })}
                             endAdornment={

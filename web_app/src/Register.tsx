@@ -46,11 +46,13 @@ export default function Register() {
             <Typography variant="h4">Sign up</Typography>
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
                 <Stack spacing={3}>
-                    <TextField id="email" label="Email" variant="outlined" type="email" {...register("email", { required: "Email is required" })} error={!!errors.email} helperText={errors.email?.message as string} />
+                    <TextField id="email" label="Email" variant="outlined" type="email" {...register("email", { required: "Email is required" })}
+                        error={!!errors.email} helperText={errors.email?.message as string} autoComplete="email" />
                     <FormControl sx={{ m: 1 }} variant="outlined" error={!!errors.password}>
                         <InputLabel htmlFor="password">Password</InputLabel>
                         <OutlinedInput
                             id="password"
+                            autoComplete="new-password"
                             type={showPassword ? 'text' : 'password'}
                             {...register("password", { required: "Passsword is required" })}
                             endAdornment={
@@ -76,6 +78,7 @@ export default function Register() {
                         <InputLabel htmlFor="password2">Confirm password</InputLabel>
                         <OutlinedInput
                             id="password2"
+                            autoComplete="new-password"
                             type={showPassword2 ? 'text' : 'password'}
                             {...register("password2", { required: "Confirm password is required" })}
                             endAdornment={
