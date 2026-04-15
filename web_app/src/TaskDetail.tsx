@@ -1,15 +1,35 @@
 import { Breadcrumbs, Button, ButtonGroup, Divider, FormControl, InputLabel, Link, MenuItem, Select, Stack, ToggleButton, ToggleButtonGroup, Typography, type SelectChangeEvent } from "@mui/material";
-import { useState } from "react";
-import { Link as RouterLink } from "react-router";
+import { useEffect, useState } from "react";
+import { Link as RouterLink, useParams } from "react-router";
+import { type Task } from "./models";
 
-const data = { id: 1, name: "Set up development environment", status: "TODO", projectId: 1, description: "Build a responsive login page with validation and API integration. Handle errors, loading states, and ensure consistency with the design system." }
 const statuses = ["IDEA", "TODO", "IN_PROGRESS", "DONE"];
 
 export default function TaskDetail() {
-    const [task, setTask] = useState(data);
+    const [task, setTask] = useState<Task>({ id: 0, name: '', projectId: 0, status: "" });
+    const { id } = useParams();
+
+    useEffect(() => {
+        fetch(import.meta.env.VITE_API_URL + '/tasks/' + id, {
+            method: 'get',
+            credentials: "include"
+        }).then(res => {
+            return res.json();
+        }).then(data => {
+            setTask(data);
+        })
+    }, []);
 
     const handleStatusChange = (event: React.MouseEvent<HTMLElement>, newValue: string) => {
-        setTask({ ...task, status: newValue });
+        fetch(import.meta.env.VITE_API_URL + '/tasks/' + id, {
+            method: 'put',
+            credentials: "include",
+            body: JSON.stringify({ ...task, status: newValue })
+        }).then(res => {
+            return res.json();
+        }).then(data => {
+            setTask(data);
+        })
     };
 
     return (
@@ -43,8 +63,8 @@ export default function TaskDetail() {
                 ))}
             </ToggleButtonGroup>
             <Divider />
-            <Typography variant="h5">Description</Typography>
-            <Typography variant="body1">{task.description}</Typography>
+            {/* <Typography variant="h5">Description</Typography>
+            <Typography variant="body1">{task.description}</Typography> */}
         </Stack>
     )
 }
