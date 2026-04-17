@@ -24,6 +24,10 @@ class CreateTaskDTO
 
         #[Assert\NotBlank]
         #[Assert\Choice(callback: [TaskType::class, 'getChoices'])]
-        public readonly ?string $type = null
+        public readonly ?string $type = null,
+
+        #[Assert\NotBlank]
+        #[Assert\Choice(callback: [TaskStatus::class, 'getChoices'])]
+        public readonly ?string $status = null,
     ) {}
 }

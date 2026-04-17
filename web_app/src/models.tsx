@@ -23,4 +23,5 @@ export type NewTask = {
     description: string;
     projectId: number;
     type: string;
+    status: string;
 }

@@ -89,10 +89,15 @@ class TaskController extends AbstractController
             return $this->json(['error' => 'Invalid type'], 400);
         }
 
+        $status = TaskStatus::tryFrom($data->status);
+        if (!$status) {
+            return $this->json(['error' => 'Invalid status'], 400);
+        }
+
         $task = new Task();
         $task->setName($data->name)
             ->setProject($project)
-            ->setStatus(TaskStatus::IDEA)
+            ->setStatus($status)
             ->setType($type);
 
         $em->persist($task);

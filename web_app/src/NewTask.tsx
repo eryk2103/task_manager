@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
 
 const types = ["Feature", "Bug", "Refactor", "Improve", "Other"];
+const statuses = ["IDEA", "TODO", "IN_PROGRESS", "DONE"];
+
 export default function NewTask() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
@@ -49,7 +51,7 @@ export default function NewTask() {
                 <Stack spacing={3}>
                     <TextField id="name" label="Name" variant="outlined" {...register("name", { required: "Name is required" })} error={!!errors.name}
                         helperText={errors.name?.message as string} />
-                    <Box sx={{ width: { sm: 200 } }}>
+                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3}>
                         <FormControl fullWidth>
                             <InputLabel id="type-label">Type</InputLabel>
                             <Select
@@ -62,7 +64,19 @@ export default function NewTask() {
                                 {types.map(type => <MenuItem value={type.toUpperCase()}>{type}</MenuItem>)}
                             </Select>
                         </FormControl>
-                    </Box>
+                        <FormControl fullWidth>
+                            <InputLabel id="type-label">Status</InputLabel>
+                            <Select
+                                labelId="type-label"
+                                id="type"
+                                {...register("status", { required: "Status is required" })}
+                                defaultValue={statuses[1]}
+                                label="Type"
+                            >
+                                {statuses.map(status => <MenuItem value={status}>{status}</MenuItem>)}
+                            </Select>
+                        </FormControl>
+                    </Stack>
                     <Box>
                         <Button variant="contained" type="submit" size="large" sx={{ width: { xs: '100%', sm: 'auto' } }}>Submit</Button>
                     </Box>
