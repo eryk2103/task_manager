@@ -17,11 +17,11 @@ RUN docker-php-ext-install \
     zip \
     opcache
 
+RUN chown -R www-data:www-data /var/www/var
+
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
-
-RUN chown -R www-data:www-data /var/www/var
 
 EXPOSE 9000
