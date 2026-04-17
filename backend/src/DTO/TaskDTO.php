@@ -3,6 +3,7 @@
 namespace App\DTO;
 
 use App\Enum\TaskStatus;
+use App\Enum\TaskType;
 
 class TaskDTO
 {
@@ -11,5 +12,6 @@ class TaskDTO
         public readonly string $name,
         public readonly TaskStatus $status,
         public readonly int $projectId,
+        public readonly TaskType $type
     ) {}
 }

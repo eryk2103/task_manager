@@ -1,8 +1,9 @@
-import { Alert, Box, Breadcrumbs, Button, Link, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Breadcrumbs, Button, FormControl, InputLabel, Link, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
 
+const types = ["Feature", "Bug", "Refactor", "Improve", "Other"];
 export default function NewTask() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
@@ -48,6 +49,20 @@ export default function NewTask() {
                 <Stack spacing={3}>
                     <TextField id="name" label="Name" variant="outlined" {...register("name", { required: "Name is required" })} error={!!errors.name}
                         helperText={errors.name?.message as string} />
+                    <Box sx={{ width: { sm: 200 } }}>
+                        <FormControl fullWidth>
+                            <InputLabel id="type-label">Type</InputLabel>
+                            <Select
+                                labelId="type-label"
+                                id="type"
+                                {...register("type", { required: "Type is required" })}
+                                defaultValue={types[0].toUpperCase()}
+                                label="Type"
+                            >
+                                {types.map(type => <MenuItem value={type.toUpperCase()}>{type}</MenuItem>)}
+                            </Select>
+                        </FormControl>
+                    </Box>
                     <Box>
                         <Button variant="contained" type="submit" size="large" sx={{ width: { xs: '100%', sm: 'auto' } }}>Submit</Button>
                     </Box>

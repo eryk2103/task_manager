@@ -1,4 +1,4 @@
-import { Breadcrumbs, Button, Dialog, DialogActions, DialogTitle, Divider, Link, Stack, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import { Box, Breadcrumbs, Button, Chip, Dialog, DialogActions, DialogTitle, Divider, Link, Stack, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
 import { type Task } from "./models";
@@ -7,7 +7,7 @@ import CheckIcon from '@mui/icons-material/Check';
 const statuses = ["IDEA", "TODO", "IN_PROGRESS", "DONE"];
 
 export default function TaskDetail() {
-    const [task, setTask] = useState<Task>({ id: 0, name: '', projectId: 0, status: "" });
+    const [task, setTask] = useState<Task>({ id: 0, name: '', projectId: 0, status: "", type: "" });
     const [statusSuccess, setStatusSuccess] = useState(false);
     const { id } = useParams();
     const navigate = useNavigate();
@@ -92,7 +92,12 @@ export default function TaskDetail() {
                     </Link>
                     <Typography sx={{ color: 'text.primary' }}>Task overview</Typography>
                 </Breadcrumbs>
-                <Typography variant="h4">{task.name}</Typography>
+                <Box>
+                    <Typography variant="h4">{task.name}</Typography>
+                    <Stack alignItems="start" direction="row" sx={{ mt: 1 }} spacing={3}>
+                        <Chip label={task.type} variant="outlined" size="small" />
+                    </Stack>
+                </Box>
                 <Stack spacing={2} direction="row">
                     <Button variant="outlined" color="error" onClick={handleClickOpen}>Delete</Button>
                 </Stack>

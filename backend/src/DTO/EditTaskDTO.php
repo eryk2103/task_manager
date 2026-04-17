@@ -3,7 +3,7 @@
 namespace App\DTO;
 
 use App\Enum\TaskStatus;
-
+use App\Enum\TaskType;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class EditTaskDTO
@@ -20,6 +20,10 @@ class EditTaskDTO
 
         #[Assert\NotBlank]
         #[Assert\Choice(callback: [TaskStatus::class, 'getChoices'])]
-        public readonly ?string $status = null
+        public readonly ?string $status = null,
+
+        #[Assert\NotBlank]
+        #[Assert\Choice(callback: [TaskType::class, 'getChoices'])]
+        public readonly ?string $type = null
     ) {}
 }

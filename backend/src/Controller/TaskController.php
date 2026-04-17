@@ -7,6 +7,7 @@ use App\DTO\CreateTaskDTO;
 use App\DTO\EditTaskDTO;
 use App\DTO\TaskDTO;
 use App\Enum\TaskStatus;
+use App\Enum\TaskType;
 use App\Repository\ProjectRepository;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -83,10 +84,16 @@ class TaskController extends AbstractController
             return $this->json(['error' => 'Project not found'], 404);
         }
 
+        $type = TaskType::tryFrom($data->type);
+        if (!$type) {
+            return $this->json(['error' => 'Invalid type'], 400);
+        }
+
         $task = new Task();
         $task->setName($data->name)
             ->setProject($project)
-            ->setStatus(TaskStatus::IDEA);
+            ->setStatus(TaskStatus::IDEA)
+            ->setType($type);
 
         $em->persist($task);
         $em->flush();
@@ -148,7 +155,8 @@ class TaskController extends AbstractController
             $task->getId(),
             $task->getName(),
             $task->getStatus(),
-            $task->getProject()->getId()
+            $task->getProject()->getId(),
+            $task->getType()
         );
     }
 

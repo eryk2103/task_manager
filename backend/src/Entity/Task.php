@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Enum\TaskStatus;
+use App\Enum\TaskType;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -23,6 +24,9 @@ class Task
 
     #[ORM\Column(enumType: TaskStatus::class)]
     private ?TaskStatus $status = null;
+
+    #[ORM\Column(enumType: TaskType::class, options: ['default' => TaskType::OTHER])]
+    private ?TaskType $type = null;
 
     public function getId(): ?int
     {
@@ -61,6 +65,18 @@ class Task
     public function setStatus(TaskStatus $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getType(): ?TaskType
+    {
+        return $this->type;
+    }
+
+    public function setType(TaskType $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }

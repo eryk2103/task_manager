@@ -9,15 +9,18 @@ export type Task = {
     name: string;
     status: string;
     projectId: number;
+    type: string;
 }
 
 export type EditTask = {
     name: string;
     status: string;
+    type: string;
 }
 
 export type NewTask = {
     name: string;
     description: string;
     projectId: number;
+    type: string;
 }
