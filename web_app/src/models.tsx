@@ -10,6 +10,7 @@ export type Task = {
     status: string;
     projectId: number;
     type: string;
+    priority: string;
 }
 
 export type EditTask = {
@@ -20,8 +21,8 @@ export type EditTask = {
 
 export type NewTask = {
     name: string;
-    description: string;
     projectId: number;
     type: string;
     status: string;
+    priority: string;
 }

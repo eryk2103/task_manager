@@ -5,6 +5,7 @@ import { Link as RouterLink, useNavigate, useParams } from "react-router";
 
 const types = ["Feature", "Bug", "Refactor", "Improve", "Other"];
 const statuses = ["IDEA", "TODO", "IN_PROGRESS", "DONE"];
+const priorities = ["LOW", "MID", "HIGH", "CRITICAL"];
 
 export default function NewTask() {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -65,15 +66,27 @@ export default function NewTask() {
                             </Select>
                         </FormControl>
                         <FormControl fullWidth>
-                            <InputLabel id="type-label">Status</InputLabel>
+                            <InputLabel id="status-label">Status</InputLabel>
                             <Select
-                                labelId="type-label"
-                                id="type"
+                                labelId="status-label"
+                                id="status"
                                 {...register("status", { required: "Status is required" })}
                                 defaultValue={statuses[1]}
-                                label="Type"
+                                label="Status"
                             >
                                 {statuses.map(status => <MenuItem value={status}>{status}</MenuItem>)}
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth>
+                            <InputLabel id="priority-label">Priority</InputLabel>
+                            <Select
+                                labelId="priority-label"
+                                id="priroity"
+                                {...register("priority", { required: "Priority is required" })}
+                                defaultValue={priorities[1]}
+                                label="Priority"
+                            >
+                                {priorities.map(priority => <MenuItem value={priority}>{priority}</MenuItem>)}
                             </Select>
                         </FormControl>
                     </Stack>

@@ -4,6 +4,8 @@ namespace App\DTO;
 
 use App\Enum\TaskStatus;
 use App\Enum\TaskType;
+use App\Enum\TaskPriority;
+
 use Symfony\Component\Validator\Constraints as Assert;
 
 class EditTaskDTO
@@ -24,6 +26,10 @@ class EditTaskDTO
 
         #[Assert\NotBlank]
         #[Assert\Choice(callback: [TaskType::class, 'getChoices'])]
-        public readonly ?string $type = null
+        public readonly ?string $type = null,
+
+        #[Assert\NotBlank]
+        #[Assert\Choice(callback: [TaskPriority::class, 'getChoices'])]
+        public readonly ?string $priority = null
     ) {}
 }

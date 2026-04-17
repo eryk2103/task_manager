@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Enum\TaskStatus;
 use App\Enum\TaskType;
+use App\Enum\TaskPriority;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -27,6 +28,9 @@ class Task
 
     #[ORM\Column(enumType: TaskType::class, options: ['default' => TaskType::OTHER])]
     private ?TaskType $type = null;
+
+     #[ORM\Column(enumType: TaskPriority::class, options: ['default' => TaskPriority::MID])]
+    private ?TaskPriority $priority = null;
 
     public function getId(): ?int
     {
@@ -77,6 +81,18 @@ class Task
     public function setType(TaskType $type): static
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getPriority(): ?TaskPriority
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(TaskPriority $priority): static
+    {
+        $this->priority = $priority;
 
         return $this;
     }

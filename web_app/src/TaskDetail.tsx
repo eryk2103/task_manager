@@ -7,7 +7,7 @@ import CheckIcon from '@mui/icons-material/Check';
 const statuses = ["IDEA", "TODO", "IN_PROGRESS", "DONE"];
 
 export default function TaskDetail() {
-    const [task, setTask] = useState<Task>({ id: 0, name: '', projectId: 0, status: "", type: "" });
+    const [task, setTask] = useState<Task>({ id: 0, name: '', projectId: 0, status: "", type: "", priority: "" });
     const [statusSuccess, setStatusSuccess] = useState(false);
     const { id } = useParams();
     const navigate = useNavigate();
@@ -94,8 +94,9 @@ export default function TaskDetail() {
                 </Breadcrumbs>
                 <Box>
                     <Typography variant="h4">{task.name}</Typography>
-                    <Stack alignItems="start" direction="row" sx={{ mt: 1 }} spacing={3}>
+                    <Stack alignItems="start" direction="row" sx={{ mt: 1 }} spacing={1}>
                         <Chip label={task.type} variant="outlined" size="small" />
+                        <Chip label={task.priority} variant="outlined" size="small" />
                     </Stack>
                 </Box>
                 <Stack spacing={2} direction="row">

@@ -8,6 +8,7 @@ use App\DTO\EditTaskDTO;
 use App\DTO\TaskDTO;
 use App\Enum\TaskStatus;
 use App\Enum\TaskType;
+use App\Enum\TaskPriority;
 use App\Repository\ProjectRepository;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -94,11 +95,17 @@ class TaskController extends AbstractController
             return $this->json(['error' => 'Invalid status'], 400);
         }
 
+        $priority = TaskPriority::tryFrom($data->priority);
+        if (!$priority) {
+            return $this->json(['error' => 'Invalid type'], 400);
+        }
+
         $task = new Task();
         $task->setName($data->name)
             ->setProject($project)
             ->setStatus($status)
-            ->setType($type);
+            ->setType($type)
+            ->setPriority($priority);
 
         $em->persist($task);
         $em->flush();
@@ -132,9 +139,20 @@ class TaskController extends AbstractController
             return $this->json(['error' => 'Invalid status'], 400);
         }
 
-        $task->setName($data->name)
-            ->setStatus($status);
+        $type = TaskType::tryFrom($data->type);
+        if (!$type) {
+            return $this->json(['error' => 'Invalid type'], 400);
+        }
 
+        $priority = TaskPriority::tryFrom($data->priority);
+        if (!$priority) {
+            return $this->json(['error' => 'Invalid type'], 400);
+        }
+
+        $task->setName($data->name)
+            ->setStatus($status)
+            ->setType($type)
+            ->setPriority($priority);
         $em->flush();
 
         return $this->json($this->mapToTaskDTO($task), 200);
@@ -161,7 +179,8 @@ class TaskController extends AbstractController
             $task->getName(),
             $task->getStatus(),
             $task->getProject()->getId(),
-            $task->getType()
+            $task->getType(),
+            $task->getPriority()
         );
     }
 
