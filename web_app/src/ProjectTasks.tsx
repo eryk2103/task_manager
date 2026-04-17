@@ -73,6 +73,7 @@ export default function ProjectTasks() {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
                 role="alertdialog"
+                slotProps={{ paper: { sx: { alignSelf: 'flex-start', mt: '20%' } } }}
             >
                 <DialogTitle id="alert-dialog-title">
                     {"Are you sure you want to delete this project?"}
