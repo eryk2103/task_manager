@@ -17,7 +17,7 @@ export default function NewTask() {
                 body: JSON.stringify({ ...data, projectId: Number(id) })
             });
             if (res.ok) {
-                navigate('/');
+                navigate('/project/' + id);
             }
             else {
                 setError('Something went wrong')
