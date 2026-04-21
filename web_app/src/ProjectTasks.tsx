@@ -1,5 +1,5 @@
-import { Box, Breadcrumbs, Button, Dialog, DialogActions, DialogTitle, Divider, Link, List, ListItem, ListItemButton, ListItemText, Stack, Tab, Tabs, Typography } from "@mui/material";
-import { Fragment, useEffect, useState } from "react";
+import { Box, Breadcrumbs, Button, Dialog, DialogActions, DialogTitle, Divider, Link, List, ListItem, ListItemButton, ListItemText, Pagination, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Fragment, useEffect, useState, type ChangeEvent } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
 import type { Project, Task } from "./models";
 
@@ -11,6 +11,8 @@ export default function ProjectTasks() {
     const [tasks, setTasks] = useState<Task[]>([]);
     const { id } = useParams();
     const navigate = useNavigate();
+    const [pagination, setPagination] = useState({ page: 1, limit: 3, $total: 0, pages: 0 });
+    const [page, setPage] = useState(1);
 
     useEffect(() => {
         fetch(import.meta.env.VITE_API_URL + '/projects/' + id, {
@@ -27,7 +29,7 @@ export default function ProjectTasks() {
     }, [])
 
     useEffect(() => {
-        fetch(import.meta.env.VITE_API_URL + '/tasks?project=' + id + '&status=' + status, {
+        fetch(import.meta.env.VITE_API_URL + '/tasks?project=' + id + '&status=' + status + '&page=' + page + '&limit=' + 20, {
             method: 'get',
             credentials: 'include',
             headers: {
@@ -36,10 +38,11 @@ export default function ProjectTasks() {
         }).then(res => {
             return res.json();
         }).then(data => {
-            setTasks(data);
+            setTasks(data.data);
+            setPagination(data.meta);
         });
 
-    }, [status])
+    }, [status, page])
 
     const handleStatusChange = (_event: React.SyntheticEvent, newValue: Status) => {
         setStatus(newValue);
@@ -65,6 +68,10 @@ export default function ProjectTasks() {
             }
         });
     };
+
+    const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
+        setPage(value);
+    }
 
     return (
         <>
@@ -135,6 +142,10 @@ export default function ProjectTasks() {
                             </Fragment>
                         )}
                     </List>
+                    <Stack spacing={2} direction="row-reverse">
+                        <Pagination count={pagination.pages} variant="outlined" shape="rounded" page={pagination.page} onChange={handlePageChange} />
+
+                    </Stack>
                 </Box>
             </Stack>
         </>

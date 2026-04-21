@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Task;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -45,8 +46,10 @@ class TaskRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByOwnerAndProject($user, $project, $status = ''): array
+    public function findByOwnerAndProject($user, $project, $status = '', int $page = 1, int $limit = 20): array
     {
+        $offset = ($page - 1) * $limit;
+
         $qb = $this->createQueryBuilder('t')
             ->innerJoin('t.project', 'p')
             ->andWhere("p.owner = :user")
@@ -59,8 +62,15 @@ class TaskRepository extends ServiceEntityRepository
                 ->setParameter('status', strtoupper($status));
         }
 
-        return $qb->getQuery()
-            ->getResult();;
+        $qb->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        $paginator = new Paginator($qb->getQuery());
+
+        return [
+            'data' => iterator_to_array($paginator),
+            'total' => count($paginator),
+        ];
     }
 
     //    /**

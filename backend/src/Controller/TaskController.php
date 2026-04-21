@@ -31,9 +31,12 @@ class TaskController extends AbstractController
 {
     public function __construct(Private TaskService $taskService) {}
     #[Route('', name: 'api_tasks_get_all', methods: ['GET'])]
-    public function getAll(#[CurrentUser] $user, #[MapQueryParameter] int $project, #[MapQueryParameter] TaskStatus $status): JsonResponse
+    public function getAll(#[CurrentUser] $user, #[MapQueryParameter] int $project,
+                           #[MapQueryParameter] TaskStatus $status,
+                           #[MapQueryParameter] int $page = 1,
+                           #[MapQueryParameter] int $limit = 20): JsonResponse
     {
-        $tasks = $this->taskService->getAll($user, $project, $status);
+        $tasks = $this->taskService->getAll($user, $project, $status, $page, $limit);
         return $this->json($tasks, 200);
     }
 
