@@ -10,9 +10,4 @@ enum TaskType: string
     case REFACTOR = 'REFACTOR';
     case MAINTENANCE = 'MAINTENANCE';
     case OTHER = 'OTHER';
-
-    public static function getChoices(): array
-    {
-        return array_column(TaskType::cases(), 'name');
-    }
 }

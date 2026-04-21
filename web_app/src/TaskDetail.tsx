@@ -15,7 +15,10 @@ export default function TaskDetail() {
     useEffect(() => {
         fetch(import.meta.env.VITE_API_URL + '/tasks/' + id, {
             method: 'get',
-            credentials: "include"
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
         }).then(res => {
             return res.json();
         }).then(data => {
@@ -27,6 +30,9 @@ export default function TaskDetail() {
         fetch(import.meta.env.VITE_API_URL + '/tasks/' + id, {
             method: 'put',
             credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify({ ...task, status: newValue })
         }).then(res => {
             return res.json();
@@ -49,7 +55,10 @@ export default function TaskDetail() {
     const deleteTask = () => {
         fetch(import.meta.env.VITE_API_URL + '/tasks/' + id, {
             method: 'delete',
-            credentials: "include"
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            },
         }).then(res => {
             if (res.ok) {
                 navigate('/project/' + task.projectId)

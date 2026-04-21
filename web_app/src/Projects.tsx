@@ -25,6 +25,9 @@ export default function Projects() {
         fetch(import.meta.env.VITE_API_URL + "/projects?search=" + search, {
             method: "get",
             credentials: "include",
+            headers: {
+                "Content-Type": "application/json"
+            }
         }).then(res => {
             return res.json();
         }).then(data => {

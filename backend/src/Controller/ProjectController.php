@@ -6,11 +6,15 @@ use App\DTO\CreateProjectDTO;
 use App\DTO\EditProjectDTO;
 use App\DTO\ProjectDTO;
 use App\Entity\Project;
+use App\Exception\ProjectNotFoundException;
 use App\Repository\ProjectRepository;
+use App\Service\ProjectService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
@@ -21,93 +25,42 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('api/projects')]
 class ProjectController extends AbstractController
 {
-    #[Route('', name: 'api_projects_get_all', methods: ['GET'])]
-    public function getAll(#[CurrentUser] $user, Request $request, ProjectRepository $projectRepository): JsonResponse
+    public function __construct(private readonly ProjectService $projectService) {}
+    #[Route('', name: 'api_projects_index', methods: ['GET'])]
+    public function index(#[CurrentUser] $user, #[MapQueryParameter] string $search = ''): JsonResponse
     {
-        $search = $request->query->get('search', '');
-
-        $projects = $projectRepository->searchByName($search, $user);
+        $projects = $this->projectService->getAll($user, $search);
         return $this->json(array_map(fn($item) => $this->mapToProjectDTO($item), $projects), 200);
     }
 
-    #[Route('/{id}', requirements: ['id' => '\d+'], name: 'api_projects_get_by_id', methods: ['GET'])]
-    public function getById(int $id, #[CurrentUser] $user,  ProjectRepository $projectRepository): JsonResponse
+    #[Route('/{id}', name: 'api_projects_detail', requirements: ['id' => '\d+'], methods: ['GET'])]
+    public function detail(int $id, #[CurrentUser] $user): JsonResponse
     {
-        $project = $projectRepository->findOneBy(['id' => $id, 'owner' => $user]);
+        $project = $this->projectService->getById($user, $id);
         if ($project == null) {
             return $this->json(['error' => 'Project not found'], 404);
         }
-
         return $this->json($this->mapToProjectDTO($project), 200);
     }
 
     #[Route('', name: 'api_projects_create', methods: ['POST'])]
-    public function create(#[CurrentUser] $user, Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator): JsonResponse
+    public function create(#[CurrentUser] $user, #[MapRequestPayload] CreateProjectDTO $createProjectDTO): JsonResponse
     {
-        try {
-            $data = $serializer->deserialize($request->getContent(), CreateProjectDTO::class, 'json');
-        } catch (NotNormalizableValueException | UnexpectedValueException $ex) {
-            return $this->json(['error' => 'Invalid data'], 400);
-        }
-
-        $errors = $validator->validate($data);
-
-        if (count($errors) > 0) {
-            $violations = $this->formatErrors($errors);
-            return $this->json(['errors' => $violations], 400);
-        }
-
-        $project = new Project();
-        $project->setName($data->name)
-            ->setOwner($user)
-            ->setDescription($data->description);
-
-        $em->persist($project);
-        $em->flush();
-
-        return $this->json($this->mapToProjectDTO($project), 201);
+        $newProject = $this->projectService->create($user, $createProjectDTO);
+        return $this->json($this->mapToProjectDTO($newProject), 201);
     }
 
-    #[Route('/{id}', requirements: ['id' => '\d+'], name: 'api_projects_edit', methods: ['PUT'])]
-    public function edit(int $id, #[CurrentUser] $user, Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator, ProjectRepository $projectRepository): JsonResponse
+    #[Route('/{id}', name: 'api_projects_edit', requirements: ['id' => '\d+'], methods: ['PUT'])]
+    public function edit(int $id, #[CurrentUser] $user, #[MapRequestPayload] EditProjectDTO $editProjectDTO): JsonResponse
     {
-        $project = $projectRepository->findOneBy(['id' => $id, 'owner' => $user]);
-        if ($project == null) {
-            return $this->json(['error' => 'Project not found'], 404);
-        }
-
-        try {
-            $data = $serializer->deserialize($request->getContent(), EditProjectDTO::class, 'json');
-        } catch (NotNormalizableValueException | UnexpectedValueException $ex) {
-            return $this->json(['error' => 'Invalid data'], 400);
-        }
-
-        $errors = $validator->validate($data);
-
-        if (count($errors) > 0) {
-            $violations = $this->formatErrors($errors);
-            return $this->json(['errors' => $violations], 400);
-        }
-
-        $project->setName($data->name)
-            ->setDescription($data->description);
-
-        $em->flush();
-
+        $project = $this->projectService->update($user, $editProjectDTO, $id);
         return $this->json($this->mapToProjectDTO($project), 200);
     }
 
-    #[Route('/{id}', requirements: ['id' => '\d+'], name: 'api_projects_delete', methods: ['DELETE'])]
-    public function delete(int $id, #[CurrentUser] $user, ProjectRepository $projectRepository, EntityManagerInterface $em): JsonResponse
+    #[Route('/{id}', name: 'api_projects_delete', requirements: ['id' => '\d+'], methods: ['DELETE'])]
+    public function delete(int $id, #[CurrentUser] $user): JsonResponse
     {
-        $project = $projectRepository->findOneBy(['id' => $id, 'owner' => $user]);
-        if ($project == null) {
-            return $this->json(['error' => 'Project not found'], 404);
-        }
-
-        $em->remove($project);
-        $em->flush();
-
+        $this->projectService->delete($user, $id);
         return $this->json(null, 204);
     }
 
@@ -118,14 +71,5 @@ class ProjectController extends AbstractController
             $project->getName(),
             $project->getDescription()
         );
-    }
-
-    private function formatErrors($errors): array
-    {
-        $result = [];
-        foreach ($errors as $error) {
-            $result[$error->getPropertyPath()][] = $error->getMessage();
-        }
-        return $result;
     }
 }

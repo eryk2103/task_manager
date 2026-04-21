@@ -19,7 +19,7 @@ export default function EditTask() {
             try {
                 const res = await fetch(import.meta.env.VITE_API_URL + '/tasks/' + id, {
                     method: 'get',
-                    credentials: 'include'
+                    credentials: 'include',
                 });
                 const data = await res.json();
                 setProjectId(data.projectId);

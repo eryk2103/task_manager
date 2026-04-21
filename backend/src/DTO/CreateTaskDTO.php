@@ -24,15 +24,15 @@ class CreateTaskDTO
         public readonly ?int $projectId = null,
 
         #[Assert\NotBlank]
-        #[Assert\Choice(callback: [TaskType::class, 'getChoices'])]
-        public readonly ?string $type = null,
+        #[Assert\Choice(callback: [TaskType::class, 'cases'])]
+        public readonly ?TaskType $type = null,
 
         #[Assert\NotBlank]
-        #[Assert\Choice(callback: [TaskStatus::class, 'getChoices'])]
-        public readonly ?string $status = null,
+        #[Assert\Choice(callback: [TaskStatus::class, 'cases'])]
+        public readonly ?TaskStatus $status = null,
 
         #[Assert\NotBlank]
-        #[Assert\Choice(callback: [TaskPriority::class, 'getChoices'])]
-        public readonly ?string $priority = null
+        #[Assert\Choice(callback: [TaskPriority::class, 'cases'])]
+        public readonly ?TaskPriority $priority = null
     ) {}
 }

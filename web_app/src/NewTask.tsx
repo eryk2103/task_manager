@@ -18,6 +18,9 @@ export default function NewTask() {
             const res = await fetch(import.meta.env.VITE_API_URL + '/tasks', {
                 method: 'post',
                 credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({ ...data, projectId: Number(id) })
             });
             if (res.ok) {

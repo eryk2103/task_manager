@@ -25,6 +25,9 @@ export default function EditProject() {
             const res = await fetch(import.meta.env.VITE_API_URL + '/projects/' + id, {
                 method: 'put',
                 credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({ ...data })
             });
             if (res.ok) {

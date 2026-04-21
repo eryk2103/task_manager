@@ -15,7 +15,10 @@ export default function ProjectTasks() {
     useEffect(() => {
         fetch(import.meta.env.VITE_API_URL + '/projects/' + id, {
             method: 'get',
-            credentials: 'include'
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json"
+            },
         }).then(res => {
             return res.json();
         }).then(data => {
@@ -26,7 +29,10 @@ export default function ProjectTasks() {
     useEffect(() => {
         fetch(import.meta.env.VITE_API_URL + '/tasks?project=' + id + '&status=' + status, {
             method: 'get',
-            credentials: 'include'
+            credentials: 'include',
+            headers: {
+                "Content-Type": "application/json"
+            },
         }).then(res => {
             return res.json();
         }).then(data => {
