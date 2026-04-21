@@ -101,6 +101,7 @@ export default function TaskDetail() {
                 </Box>
                 <Stack spacing={2} direction="row">
                     <Button variant="outlined" color="error" onClick={handleClickOpen}>Delete</Button>
+                    <Button variant="outlined" color="info" onClick={() => navigate('/task/' + task.id + '/edit')}>Edit</Button>
                 </Stack>
                 <Divider />
                 <Typography variant="h5">Status</Typography>
