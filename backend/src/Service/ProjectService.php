@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\DTO\CreateProjectDTO;
 use App\DTO\EditProjectDTO;
+use App\DTO\ProjectDTO;
 use App\Entity\Project;
 use App\Entity\User;
 use App\Exception\ProjectNotFoundException;
@@ -15,14 +16,14 @@ class ProjectService {
     public function __construct(private ProjectRepository $projectRepository, private EntityManagerInterface $entityManager) {}
 
     public function getAll(User $user, string $search = ''): array {
-        return $this->projectRepository->searchByName($search, $user);
+        return array_map(fn($item) => $this->mapToProjectDTO($item), $this->projectRepository->searchByName($search, $user));
     }
 
-    public function getById(User $user, int $id): Project|null {
-        return $this->projectRepository->findOneBy(['id' => $id, 'owner' => $user]);
+    public function getById(User $user, int $id): ProjectDTO|null {
+        return $this->mapToProjectDTO($this->projectRepository->findOneBy(['id' => $id, 'owner' => $user]));
     }
 
-    public function create(User $user, CreateProjectDTO $createProjectDTO): Project {
+    public function create(User $user, CreateProjectDTO $createProjectDTO): ProjectDto {
         $project = new Project();
         $project->setName($createProjectDTO->name)
             ->setOwner($user)
@@ -31,10 +32,10 @@ class ProjectService {
         $this->entityManager->persist($project);
         $this->entityManager->flush();
 
-        return $project;
+        return $this->mapToProjectDTO($project);
     }
 
-    public function update(User $user, EditProjectDTO $editProjectDTO, int $id): Project {
+    public function update(User $user, EditProjectDTO $editProjectDTO, int $id): ProjectDTO {
         $project = $this->projectRepository->findOneBy(['id' => $id, 'owner' => $user]);
         if ($project === null) {
             throw new ProjectNotFoundException();
@@ -44,7 +45,7 @@ class ProjectService {
             ->setDescription($editProjectDTO->description);
 
         $this->entityManager->flush();
-        return $project;
+        return $this->mapToProjectDTO($project);
     }
 
     public function delete(User $user, int $id): void {
@@ -55,5 +56,14 @@ class ProjectService {
 
         $this->entityManager->remove($project);
         $this->entityManager->flush();
+    }
+
+    private function mapToProjectDTO(project $project): ProjectDTO
+    {
+        return new ProjectDTO(
+            $project->getId(),
+            $project->getName(),
+            $project->getDescription()
+        );
     }
 }

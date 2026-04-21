@@ -30,7 +30,7 @@ class ProjectController extends AbstractController
     public function index(#[CurrentUser] $user, #[MapQueryParameter] string $search = ''): JsonResponse
     {
         $projects = $this->projectService->getAll($user, $search);
-        return $this->json(array_map(fn($item) => $this->mapToProjectDTO($item), $projects), 200);
+        return $this->json($projects, 200);
     }
 
     #[Route('/{id}', name: 'api_projects_detail', requirements: ['id' => '\d+'], methods: ['GET'])]
@@ -40,21 +40,21 @@ class ProjectController extends AbstractController
         if ($project == null) {
             return $this->json(['error' => 'Project not found'], 404);
         }
-        return $this->json($this->mapToProjectDTO($project), 200);
+        return $this->json($project, 200);
     }
 
     #[Route('', name: 'api_projects_create', methods: ['POST'])]
     public function create(#[CurrentUser] $user, #[MapRequestPayload] CreateProjectDTO $createProjectDTO): JsonResponse
     {
         $newProject = $this->projectService->create($user, $createProjectDTO);
-        return $this->json($this->mapToProjectDTO($newProject), 201);
+        return $this->json($newProject, 201);
     }
 
     #[Route('/{id}', name: 'api_projects_edit', requirements: ['id' => '\d+'], methods: ['PUT'])]
     public function edit(int $id, #[CurrentUser] $user, #[MapRequestPayload] EditProjectDTO $editProjectDTO): JsonResponse
     {
         $project = $this->projectService->update($user, $editProjectDTO, $id);
-        return $this->json($this->mapToProjectDTO($project), 200);
+        return $this->json($project, 200);
     }
 
     #[Route('/{id}', name: 'api_projects_delete', requirements: ['id' => '\d+'], methods: ['DELETE'])]
@@ -62,14 +62,5 @@ class ProjectController extends AbstractController
     {
         $this->projectService->delete($user, $id);
         return $this->json(null, 204);
-    }
-
-    private function mapToProjectDTO(project $project): ProjectDTO
-    {
-        return new ProjectDTO(
-            $project->getId(),
-            $project->getName(),
-            $project->getDescription()
-        );
     }
 }
