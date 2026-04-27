@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\TaskQueryDTO;
 use App\Entity\Task;
 use App\DTO\CreateTaskDTO;
 use App\DTO\EditTaskDTO;
@@ -17,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -31,12 +33,9 @@ class TaskController extends AbstractController
 {
     public function __construct(Private TaskService $taskService) {}
     #[Route('', name: 'api_tasks_get_all', methods: ['GET'])]
-    public function getAll(#[CurrentUser] $user, #[MapQueryParameter] int $project,
-                           #[MapQueryParameter] TaskStatus $status,
-                           #[MapQueryParameter] int $page = 1,
-                           #[MapQueryParameter] int $limit = 20): JsonResponse
+    public function getAll(#[CurrentUser] $user, #[MapQueryString] TaskQueryDTO $query): JsonResponse
     {
-        $tasks = $this->taskService->getAll($user, $project, $status, $page, $limit);
+        $tasks = $this->taskService->getAll($user, $query->project, $query->status, $query->page, $query->limit);
         return $this->json($tasks, 200);
     }
 
