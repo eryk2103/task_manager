@@ -1,5 +1,5 @@
-import { Box, Button, CircularProgress, Divider, List, ListItem, ListItemButton, ListItemText, Stack, TextField, Typography } from "@mui/material";
-import { Fragment, useEffect, useState } from "react";
+import { Box, Button, CircularProgress, Divider, List, ListItem, ListItemButton, ListItemText, Pagination, Stack, TextField, Typography } from "@mui/material";
+import { Fragment, useEffect, useState, type ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import AddIcon from '@mui/icons-material/Add';
 import type { Project } from "./models";
@@ -10,6 +10,8 @@ export default function Projects() {
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const navigate = useNavigate();
+    const [pagination, setPagination] = useState({ page: 1, limit: 3, $total: 0, pages: 0 });
+    const [page, setPage] = useState(1);
 
     useEffect(() => {
         const handler = setTimeout(() => {
@@ -22,7 +24,7 @@ export default function Projects() {
     }, [search])
 
     useEffect(() => {
-        fetch(import.meta.env.VITE_API_URL + "/projects?search=" + search, {
+        fetch(import.meta.env.VITE_API_URL + "/projects?search=" + search + '&page=' + page + '&limit=' + 10, {
             method: "get",
             credentials: "include",
             headers: {
@@ -31,11 +33,16 @@ export default function Projects() {
         }).then(res => {
             return res.json();
         }).then(data => {
-            setProjects(data);
+            setProjects(data.data);
+            setPagination(data.meta);
         }).finally(() => {
             setLoading(false);
         })
-    }, [debouncedSearch]);
+    }, [debouncedSearch, page]);
+
+    const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
+        setPage(value);
+    }
 
     return (
         <Stack spacing={2}>
@@ -68,6 +75,12 @@ export default function Projects() {
                         </Fragment>
                     )}
                 </List>
+                {pagination.pages > 1 &&
+                    <Stack spacing={2} direction="row-reverse">
+                        <Pagination count={pagination.pages} variant="outlined" shape="rounded" page={pagination.page} onChange={handlePageChange} />
+
+                    </Stack>
+                }
             </>
             }
         </Stack>

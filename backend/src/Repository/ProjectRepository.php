@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Project;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,8 +17,10 @@ class ProjectRepository extends ServiceEntityRepository
         parent::__construct($registry, Project::class);
     }
 
-    public function searchByName($value, $user): array
+    public function searchByName($value, $user, $page, $limit): array
     {
+        $offset = ($page - 1) * $limit;
+
         $qb = $this->createQueryBuilder('p');
 
         if ($value !== '') {
@@ -28,10 +31,15 @@ class ProjectRepository extends ServiceEntityRepository
         $qb->andWhere('p.owner = :owner')
             ->setParameter('owner', $user);
 
-        return $qb->orderBy('p.id', 'ASC')
-            ->getQuery()
-            ->getResult()
-        ;
+        $qb->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        $paginator = new Paginator($qb->getQuery());
+
+        return [
+            'data' => iterator_to_array($paginator),
+            'total' => count($paginator),
+        ];
     }
     //    /**
     //     * @return Project[] Returns an array of Project objects

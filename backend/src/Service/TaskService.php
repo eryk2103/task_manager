@@ -6,7 +6,7 @@ use App\DTO\CreateTaskDTO;
 use App\DTO\EditTaskDTO;
 use App\DTO\PaginationDTO;
 use App\DTO\TaskDTO;
-use App\DTO\TaskPaginatedDTO;
+use App\DTO\PaginatedResultDTO;
 use App\Entity\Project;
 use App\Entity\Task;
 use App\Entity\User;
@@ -19,11 +19,11 @@ use Doctrine\ORM\EntityManagerInterface;
 class TaskService {
     public function __construct(private TaskRepository $taskRepository, private EntityManagerInterface $em, private ProjectRepository $projectRepository) {}
 
-    public function getAll(User $user, int $projectId, TaskStatus $status = TaskStatus::TODO, int $page = 1, int $limit = 20): TaskPaginatedDTO {
+    public function getAll(User $user, int $projectId, TaskStatus $status = TaskStatus::TODO, int $page = 1, int $limit = 20): PaginatedResultDTO {
         $result = $this->taskRepository->findByOwnerAndProject($user, $projectId, $status->name, $page, $limit);
         $tasksDTO = array_map(fn($item) => $this->mapToTaskDTO($item), $result['data']);
 
-        return new TaskPaginatedDTO($tasksDTO, new PaginationDTO($page, $limit, $result['total'], ceil($result['total'] / $limit)));
+        return new PaginatedResultDTO($tasksDTO, new PaginationDTO($page, $limit, $result['total'], ceil($result['total'] / $limit)));
     }
 
     public function getById(User $user, int $id): TaskDTO|null {

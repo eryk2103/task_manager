@@ -4,6 +4,8 @@ namespace App\Service;
 
 use App\DTO\CreateProjectDTO;
 use App\DTO\EditProjectDTO;
+use App\DTO\PaginatedResultDTO;
+use App\DTO\PaginationDTO;
 use App\DTO\ProjectDTO;
 use App\Entity\Project;
 use App\Entity\User;
@@ -15,8 +17,11 @@ class ProjectService {
 
     public function __construct(private ProjectRepository $projectRepository, private EntityManagerInterface $entityManager) {}
 
-    public function getAll(User $user, string $search = ''): array {
-        return array_map(fn($item) => $this->mapToProjectDTO($item), $this->projectRepository->searchByName($search, $user));
+    public function getAll(User $user, string $search = '', int $page = 1, int $limit = 20): PaginatedResultDTO {
+        $result = $this->projectRepository->searchByName($search, $user, $page, $limit);
+        $data = array_map(fn($item) => $this->mapToProjectDTO($item), $result['data']);
+
+        return new PaginatedResultDTO($data, new PaginationDTO($page, $limit, $result['total'], ceil($result['total'] / $limit)));
     }
 
     public function getById(User $user, int $id): ProjectDTO|null {

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\DTO\CreateProjectDTO;
 use App\DTO\EditProjectDTO;
 use App\DTO\ProjectDTO;
+use App\DTO\ProjectQueryDTO;
 use App\Entity\Project;
 use App\Exception\ProjectNotFoundException;
 use App\Repository\ProjectRepository;
@@ -14,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
@@ -27,9 +29,9 @@ class ProjectController extends AbstractController
 {
     public function __construct(private readonly ProjectService $projectService) {}
     #[Route('', name: 'api_projects_index', methods: ['GET'])]
-    public function index(#[CurrentUser] $user, #[MapQueryParameter] string $search = ''): JsonResponse
+    public function index(#[CurrentUser] $user, #[MapQueryString] ProjectQueryDTO $query): JsonResponse
     {
-        $projects = $this->projectService->getAll($user, $search);
+        $projects = $this->projectService->getAll($user, $query->search, $query->page, $query->limit);
         return $this->json($projects, 200);
     }
 
