@@ -21,7 +21,7 @@ class ProjectRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('p');
 
         if ($value !== '') {
-            $qb->andWhere('p.name LIKE :val')
+            $qb->andWhere('LOWER(p.name) LIKE LOWER(:val)')
                 ->setParameter('val', '%' . $value . '%');
         }
 
