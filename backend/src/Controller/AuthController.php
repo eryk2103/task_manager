@@ -3,10 +3,15 @@
 namespace App\Controller;
 
 use App\DTO\RegisterDTO;
+use App\Entity\RefreshToken;
 use App\Entity\User;
+use App\Service\RefreshTokenService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -25,7 +30,7 @@ class AuthController extends AbstractController
     {
         try {
             $data = $serializer->deserialize($request->getContent(), RegisterDTO::class, 'json');
-        } catch (NotNormalizableValueException | UnexpectedValueException $ex) {
+        } catch (NotNormalizableValueException|UnexpectedValueException $ex) {
             return $this->json(['error' => 'Invalid data'], 400);
         }
 
@@ -64,6 +69,14 @@ class AuthController extends AbstractController
             true
         );
 
+        $response->headers->clearCookie(
+            'refresh_token',
+            '/',
+            null,
+            true,
+            true
+        );
+
         return $response;
     }
 
@@ -80,5 +93,50 @@ class AuthController extends AbstractController
             $result[$error->getPropertyPath()][] = $error->getMessage();
         }
         return $result;
+    }
+
+    #[Route('/refresh', name: 'api_refresh', methods: ['GET'])]
+    public function refresh(Request $request, RefreshTokenService $refreshTokenService, JWTTokenManagerInterface $JWTManager): JsonResponse
+    {
+        $refreshTokenString = $request->cookies->get('refresh_token');
+        if(!$refreshTokenString) {
+            return $this->json(['error' => 'Refresh token not found'], 400);
+        }
+
+        $refreshToken = $refreshTokenService->getRefreshToken($refreshTokenString);
+        if(!$refreshToken) {
+            return $this->json(['error' => 'Invalid refresh token'], 401);
+        }
+
+        if($refreshToken->getExpiresAt() < new \DateTimeImmutable("now"))
+        {
+            $refreshTokenService->invalidateRefreshToken($refreshToken);
+            return $this->json(['error' => 'Refresh token expired'], 401);
+        }
+
+        $user = $refreshToken->getOwner();
+
+        $refreshTokenService->invalidateRefreshToken($refreshToken);
+        $newRefreshToken = $refreshTokenService->generateRefreshToken($user);
+
+        $accessToken = $JWTManager->create($user);
+
+        $cookie = Cookie::create('refresh_token', $newRefreshToken->getToken())
+            ->withHttpOnly(true)
+            ->withSecure(false)
+            ->withSameSite('Lax')
+            ->withExpires($newRefreshToken->getExpiresAt());
+
+        $jwtCookie = Cookie::create('BEARER', $accessToken)
+            ->withHttpOnly(true)
+            ->withSecure(false)
+            ->withSameSite('Lax')
+            ->withExpires(new \DateTimeImmutable("+ 1 minute"));
+
+        $response = new JsonResponse(['email' => $user->getEmail()], 200);
+        $response->headers->setCookie($cookie);
+        $response->headers->setCookie($jwtCookie);
+
+        return $response;
     }
 }
