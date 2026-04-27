@@ -29,7 +29,7 @@ export default function ProjectTasks() {
     }, [])
 
     useEffect(() => {
-        fetch(import.meta.env.VITE_API_URL + '/tasks?project=' + id + '&status=' + status + '&page=' + page + '&limit=' + 20, {
+        fetch(import.meta.env.VITE_API_URL + '/tasks?project=' + id + '&status=' + status + '&page=' + page + '&limit=' + 10, {
             method: 'get',
             credentials: 'include',
             headers: {
@@ -142,10 +142,12 @@ export default function ProjectTasks() {
                             </Fragment>
                         )}
                     </List>
-                    <Stack spacing={2} direction="row-reverse">
-                        <Pagination count={pagination.pages} variant="outlined" shape="rounded" page={pagination.page} onChange={handlePageChange} />
+                    {pagination.pages > 1 &&
+                        <Stack spacing={2} direction="row-reverse">
+                            <Pagination count={pagination.pages} variant="outlined" shape="rounded" page={pagination.page} onChange={handlePageChange} />
 
-                    </Stack>
+                        </Stack>
+                    }
                 </Box>
             </Stack>
         </>
