@@ -28,7 +28,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         })
             .then(res => {
                 if (!res.ok) {
-                    throw new Unauthorized('Authentication failed');
+                    refreshToken();
+                    navigate('/');
                 }
                 return res.json();
             })
@@ -36,7 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setUser({ email: data.email });
             })
             .catch(() => {
-                navigate("/login");
+                navigate('/login')
             })
             .finally(() => setLoading(false));
     }, []);
@@ -110,6 +111,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 navigate("/login");
             }
         });
+    }
+
+    const refreshToken = () => {
+        return fetch(import.meta.env.VITE_API_URL + '/refresh', {
+            method: "GET",
+            credentials: "include",
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Unauthorized('Authentication failed');
+                }
+                return res.json();
+            })
+            .then(data => {
+                setUser({ email: data.email });
+            })
     }
 
     return (
