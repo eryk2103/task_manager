@@ -4,13 +4,13 @@ import { useState, type MouseEvent } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink, useNavigate } from "react-router";
 import { useAuth } from "./authContext";
-import { Unauthorized } from "./errors";
+import { Unauthorized } from "../errors";
 
 export default function Login() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
-    const { login } = useAuth();
     const [error, setError] = useState('');
+    const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);

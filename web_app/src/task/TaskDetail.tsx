@@ -1,13 +1,11 @@
 import { Box, Breadcrumbs, Button, Chip, Dialog, DialogActions, DialogTitle, Divider, Link, Stack, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
-import { type Task } from "./models";
+import { TASK_STATUSES, type Task } from "./models";
 import CheckIcon from '@mui/icons-material/Check';
 
-const statuses = ["IDEA", "TODO", "IN_PROGRESS", "DONE"];
-
 export default function TaskDetail() {
-    const [task, setTask] = useState<Task>({ id: 0, name: '', projectId: 0, status: "", type: "", priority: "" });
+    const [task, setTask] = useState<Task>({ id: 0, name: '', projectId: 0, status: "TODO", type: "BUG", priority: "MID" });
     const [statusSuccess, setStatusSuccess] = useState(false);
     const { id } = useParams();
     const navigate = useNavigate();
@@ -116,7 +114,7 @@ export default function TaskDetail() {
                 <Typography variant="h5">Status</Typography>
                 <Stack spacing={1}>
                     <ToggleButtonGroup value={task.status} exclusive onChange={handleStatusChange} color="primary">
-                        {statuses.map((status) => (
+                        {TASK_STATUSES.map((status) => (
                             <ToggleButton key={status} value={status}>
                                 {status}
                             </ToggleButton>
@@ -127,8 +125,6 @@ export default function TaskDetail() {
                     }
                 </Stack>
                 <Divider />
-                {/* <Typography variant="h5">Description</Typography>
-            <Typography variant="body1">{task.description}</Typography> */}
             </Stack>
         </>
     )

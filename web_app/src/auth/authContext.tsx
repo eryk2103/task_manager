@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, type ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { BadRequest, Conflict, Unauthorized } from "./errors";
+import { BadRequest, Conflict, Unauthorized } from "../errors";
 
 type AuthContextType = {
     user: any;
