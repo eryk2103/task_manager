@@ -1,30 +1,19 @@
-import { Box, Button, CircularProgress, Divider, List, ListItem, ListItemButton, ListItemText, Pagination, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Divider, List, ListItem, ListItemButton, ListItemText, Pagination, Stack, Typography } from "@mui/material";
 import { Fragment, useEffect, useState, type ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import AddIcon from '@mui/icons-material/Add';
 import type { Project } from "./models";
+import SearchField from "../shared/SearchField";
 
 export default function Projects() {
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
+    const [pagination, setPagination] = useState({ page: 1, pages: 1 });
     const [search, setSearch] = useState('');
-    const [debouncedSearch, setDebouncedSearch] = useState('');
     const navigate = useNavigate();
-    const [pagination, setPagination] = useState({ page: 1, limit: 3, $total: 0, pages: 0 });
-    const [page, setPage] = useState(1);
 
     useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedSearch(search);
-        }, 500);
-
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [search])
-
-    useEffect(() => {
-        fetch(import.meta.env.VITE_API_URL + "/projects?search=" + search + '&page=' + page + '&limit=' + 10, {
+        fetch(import.meta.env.VITE_API_URL + "/projects?search=" + search + '&page=' + pagination.page + '&limit=' + 10, {
             method: "get",
             credentials: "include",
             headers: {
@@ -38,10 +27,10 @@ export default function Projects() {
         }).finally(() => {
             setLoading(false);
         })
-    }, [debouncedSearch, page]);
+    }, [search, pagination.page]);
 
     const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
-        setPage(value);
+        setPagination({ ...pagination, page: value });
     }
 
     return (
@@ -52,7 +41,7 @@ export default function Projects() {
                     New
                 </Button>
             </Stack>
-            <TextField id="search" label="Search" variant="outlined" disabled={loading} onChange={(e) => setSearch(e.target.value)} />
+            <SearchField loading={loading} onChange={setSearch} />
             {loading ? <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
                 <CircularProgress />
             </Box> : <>
@@ -78,7 +67,6 @@ export default function Projects() {
                 {pagination.pages > 1 &&
                     <Stack spacing={2} direction="row-reverse">
                         <Pagination count={pagination.pages} variant="outlined" shape="rounded" page={pagination.page} onChange={handlePageChange} />
-
                     </Stack>
                 }
             </>

@@ -1,6 +1,6 @@
 import { Alert, Box, CircularProgress, IconButton, Paper, Stack, Typography } from "@mui/material";
 import { Outlet, useNavigate } from "react-router";
-import { useAuth } from "./authContext";
+import { useAuth } from "./auth/authContext";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useState } from "react";
 import { Unauthorized } from "./errors";

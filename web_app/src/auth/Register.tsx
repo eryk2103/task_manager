@@ -3,15 +3,15 @@ import { Alert, Button, FormControl, FormHelperText, IconButton, InputAdornment,
 import { useState, type MouseEvent } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink } from "react-router";
-import { useAuth } from "./authContext";
-import { BadRequest, Conflict } from "./errors";
+import { useAuth } from "../auth/authContext";
+import { BadRequest, Conflict } from "../errors";
 
 export default function Register() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
-    const { register: authRegister } = useAuth();
     const [error, setError] = useState('');
+    const { register: authRegister } = useAuth();
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleClickShowPassword2 = () => setShowPassword2((show) => !show);

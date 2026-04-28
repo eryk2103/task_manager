@@ -1,7 +1,8 @@
 import { Box, Breadcrumbs, Button, Dialog, DialogActions, DialogTitle, Divider, Link, List, ListItem, ListItemButton, ListItemText, Pagination, Stack, Tab, Tabs, Typography } from "@mui/material";
 import { Fragment, useEffect, useState, type ChangeEvent } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
-import type { Project, Task } from "./models";
+import type { Project } from "./models";
+import type { Task } from "../task/models";
 
 type Status = "IDEA" | "TODO" | "IN_PROGRESS" | "DONE";
 
