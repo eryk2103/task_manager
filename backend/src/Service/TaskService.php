@@ -7,7 +7,6 @@ use App\DTO\EditTaskDTO;
 use App\DTO\PaginationDTO;
 use App\DTO\TaskDTO;
 use App\DTO\PaginatedResultDTO;
-use App\Entity\Project;
 use App\Entity\Task;
 use App\Entity\User;
 use App\Enum\TaskStatus;

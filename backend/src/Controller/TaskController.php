@@ -3,29 +3,15 @@
 namespace App\Controller;
 
 use App\DTO\TaskQueryDTO;
-use App\Entity\Task;
 use App\DTO\CreateTaskDTO;
 use App\DTO\EditTaskDTO;
-use App\DTO\TaskDTO;
-use App\Enum\TaskStatus;
-use App\Enum\TaskType;
-use App\Enum\TaskPriority;
-use App\Repository\ProjectRepository;
-use App\Repository\TaskRepository;
 use App\Service\TaskService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
-use Symfony\Component\Serializer\Exception\UnexpectedValueException;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
 #[Route('api/tasks')]

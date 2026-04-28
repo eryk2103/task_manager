@@ -3,12 +3,10 @@
 namespace App\Controller;
 
 use App\DTO\RegisterDTO;
-use App\Entity\RefreshToken;
 use App\Entity\User;
 use App\Service\RefreshTokenService;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
