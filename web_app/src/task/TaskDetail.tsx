@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
 import { TASK_STATUSES, type Task } from "./models";
 import CheckIcon from '@mui/icons-material/Check';
+import apiFetch from "../apiFetch";
 
 export default function TaskDetail() {
     const [task, setTask] = useState<Task>({ id: 0, name: '', projectId: 0, status: "TODO", type: "BUG", priority: "MID" });
@@ -11,12 +12,8 @@ export default function TaskDetail() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch(import.meta.env.VITE_API_URL + '/tasks/' + id, {
+        apiFetch('/tasks/' + id, {
             method: 'get',
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json"
-            },
         }).then(res => {
             return res.json();
         }).then(data => {
@@ -25,12 +22,8 @@ export default function TaskDetail() {
     }, []);
 
     const handleStatusChange = (_event: React.MouseEvent<HTMLElement>, newValue: string) => {
-        fetch(import.meta.env.VITE_API_URL + '/tasks/' + id, {
+        apiFetch('/tasks/' + id, {
             method: 'put',
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json"
-            },
             body: JSON.stringify({ ...task, status: newValue })
         }).then(res => {
             return res.json();
@@ -51,12 +44,8 @@ export default function TaskDetail() {
     };
 
     const deleteTask = () => {
-        fetch(import.meta.env.VITE_API_URL + '/tasks/' + id, {
+        apiFetch('/tasks/' + id, {
             method: 'delete',
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json"
-            },
         }).then(res => {
             if (res.ok) {
                 navigate('/project/' + task.projectId)

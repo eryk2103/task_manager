@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router";
 import AddIcon from '@mui/icons-material/Add';
 import type { Project } from "./models";
 import SearchField from "../shared/SearchField";
+import apiFetch from "../apiFetch";
+import { Unauthorized } from "../errors";
 
 export default function Projects() {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -13,20 +15,23 @@ export default function Projects() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch(import.meta.env.VITE_API_URL + "/projects?search=" + search + '&page=' + pagination.page + '&limit=' + 10, {
-            method: "get",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then(res => {
-            return res.json();
-        }).then(data => {
-            setProjects(data.data);
-            setPagination(data.meta);
-        }).finally(() => {
-            setLoading(false);
-        })
+        apiFetch("/projects?search=" + search + '&page=' + pagination.page + '&limit=' + 10)
+            .then(res => {
+                return res.json();
+            })
+            .then(data => {
+                setProjects(data.data);
+                setPagination(data.meta);
+            })
+            .catch(err => {
+                if (err instanceof Unauthorized) {
+                    navigate('/login');
+                    return;
+                }
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }, [search, pagination.page]);
 
     const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {

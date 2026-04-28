@@ -2,6 +2,7 @@ import { Alert, Box, Breadcrumbs, Button, FormControl, InputLabel, Link, MenuIte
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
+import apiFetch from "../apiFetch";
 
 const types = ["Feature", "Bug", "Refactor", "Improve", "Other"];
 const statuses = ["IDEA", "TODO", "IN_PROGRESS", "DONE"];
@@ -15,12 +16,8 @@ export default function NewTask() {
 
     const onSubmit = async (data: any) => {
         try {
-            const res = await fetch(import.meta.env.VITE_API_URL + '/tasks', {
+            const res = await apiFetch('/tasks', {
                 method: 'post',
-                credentials: 'include',
-                headers: {
-                    "Content-Type": "application/json"
-                },
                 body: JSON.stringify({ ...data, projectId: Number(id) })
             });
             if (res.ok) {

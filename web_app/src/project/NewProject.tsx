@@ -2,6 +2,7 @@ import { Alert, Box, Breadcrumbs, Button, Link, Stack, TextField, Typography } f
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink, useNavigate } from "react-router";
+import apiFetch from "../apiFetch";
 
 export default function Newproject() {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -10,12 +11,8 @@ export default function Newproject() {
 
     const onSubmit = async (data: any) => {
         try {
-            const res = await fetch(import.meta.env.VITE_API_URL + '/projects', {
+            const res = await apiFetch('/projects', {
                 method: 'post',
-                credentials: 'include',
-                headers: {
-                    "Content-Type": "application/json"
-                },
                 body: JSON.stringify({ ...data })
             });
             if (res.ok) {

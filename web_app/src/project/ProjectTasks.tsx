@@ -3,6 +3,7 @@ import { Fragment, useEffect, useState, type ChangeEvent } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
 import type { Project } from "./models";
 import type { Task } from "../task/models";
+import apiFetch from "../apiFetch";
 
 type Status = "IDEA" | "TODO" | "IN_PROGRESS" | "DONE";
 
@@ -16,33 +17,26 @@ export default function ProjectTasks() {
     const [page, setPage] = useState(1);
 
     useEffect(() => {
-        fetch(import.meta.env.VITE_API_URL + '/projects/' + id, {
-            method: 'get',
-            credentials: 'include',
-            headers: {
-                "Content-Type": "application/json"
-            },
-        }).then(res => {
-            return res.json();
-        }).then(data => {
-            setProject(data);
-        })
+        apiFetch('/projects/' + id)
+            .then(res => {
+                return res.json();
+            })
+            .then(data => {
+                setProject(data);
+            })
+        //TODO: Add loading state;
     }, [])
 
     useEffect(() => {
-        fetch(import.meta.env.VITE_API_URL + '/tasks?project=' + id + '&status=' + status + '&page=' + page + '&limit=' + 10, {
-            method: 'get',
-            credentials: 'include',
-            headers: {
-                "Content-Type": "application/json"
-            },
-        }).then(res => {
-            return res.json();
-        }).then(data => {
-            setTasks(data.data);
-            setPagination(data.meta);
-        });
-
+        apiFetch('/tasks?project=' + id + '&status=' + status + '&page=' + page + '&limit=' + 10)
+            .then(res => {
+                return res.json();
+            })
+            .then(data => {
+                setTasks(data.data);
+                setPagination(data.meta);
+            })
+        //TODO: Add loading state;
     }, [status, page])
 
     const handleStatusChange = (_event: React.SyntheticEvent, newValue: Status) => {
@@ -60,14 +54,14 @@ export default function ProjectTasks() {
     };
 
     const deleteProject = () => {
-        fetch(import.meta.env.VITE_API_URL + '/projects/' + id, {
-            method: 'delete',
-            credentials: "include"
-        }).then(res => {
-            if (res.ok) {
-                navigate('/')
-            }
-        });
+        apiFetch('/projects/' + id, {
+            method: 'delete'
+        })
+            .then(res => {
+                if (res.ok) {
+                    navigate('/')
+                }
+            });
     };
 
     const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {

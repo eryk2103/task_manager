@@ -2,6 +2,7 @@ import { Alert, Box, Breadcrumbs, Button, FormControl, InputLabel, Link, MenuIte
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
+import apiFetch from "../apiFetch";
 
 const types = ["Feature", "Bug", "Refactor", "Improve", "Other"];
 const statuses = ["IDEA", "TODO", "IN_PROGRESS", "DONE"];
@@ -17,10 +18,7 @@ export default function EditTask() {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const res = await fetch(import.meta.env.VITE_API_URL + '/tasks/' + id, {
-                    method: 'get',
-                    credentials: 'include',
-                });
+                const res = await apiFetch('/tasks/' + id);
                 const data = await res.json();
                 setProjectId(data.projectId);
                 reset(data);
@@ -32,9 +30,8 @@ export default function EditTask() {
     }, [])
     const onSubmit = async (data: any) => {
         try {
-            const res = await fetch(import.meta.env.VITE_API_URL + '/tasks/' + id, {
+            const res = await apiFetch('/tasks/' + id, {
                 method: 'put',
-                credentials: 'include',
                 body: JSON.stringify({ ...data, projectId: Number(id) })
             });
             if (res.ok) {

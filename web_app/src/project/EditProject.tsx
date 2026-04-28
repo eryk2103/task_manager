@@ -2,6 +2,7 @@ import { Alert, Breadcrumbs, Button, Link, Stack, TextField, Typography } from "
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
+import apiFetch from "../apiFetch";
 
 export default function EditProject() {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
@@ -10,9 +11,8 @@ export default function EditProject() {
     const { id } = useParams();
 
     useEffect(() => {
-        fetch(import.meta.env.VITE_API_URL + '/projects/' + id, {
+        apiFetch('/projects/' + id, {
             method: 'get',
-            credentials: 'include'
         }).then(res => {
             return res.json();
         }).then(data => {
@@ -22,12 +22,8 @@ export default function EditProject() {
 
     const onSubmit = async (data: any) => {
         try {
-            const res = await fetch(import.meta.env.VITE_API_URL + '/projects/' + id, {
+            const res = await apiFetch('/projects/' + id, {
                 method: 'put',
-                credentials: 'include',
-                headers: {
-                    "Content-Type": "application/json"
-                },
                 body: JSON.stringify({ ...data })
             });
             if (res.ok) {
