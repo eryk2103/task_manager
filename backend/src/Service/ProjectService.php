@@ -4,9 +4,6 @@ namespace App\Service;
 
 use App\DTO\CreateProjectDTO;
 use App\DTO\EditProjectDTO;
-use App\DTO\PaginatedResultDTO;
-use App\DTO\PaginationDTO;
-use App\DTO\ProjectDTO;
 use App\Entity\Project;
 use App\Entity\User;
 use App\Exception\ProjectNotFoundException;
@@ -17,18 +14,26 @@ class ProjectService {
 
     public function __construct(private ProjectRepository $projectRepository, private EntityManagerInterface $entityManager) {}
 
-    public function getAll(User $user, string $search = '', int $page = 1, int $limit = 20): PaginatedResultDTO {
+    public function getAll(User $user, string $search = '', int $page = 1, int $limit = 20): array {
+        if($limit < 1 || $page < 1) {
+            return ['data' => [], 'total' => 0];
+        }
+
         $result = $this->projectRepository->searchByName($search, $user, $page, $limit);
-        $data = array_map(fn($item) => $this->mapToProjectDTO($item), $result['data']);
+        $pages = ceil($result['total'] / $limit);
 
-        return new PaginatedResultDTO($data, new PaginationDTO($page, $limit, $result['total'], ceil($result['total'] / $limit)));
+        return ['data' => $result['data'], 'total' => $result['total'], 'pages' => $pages];
     }
 
-    public function getById(User $user, int $id): ProjectDTO|null {
-        return $this->mapToProjectDTO($this->projectRepository->findOneBy(['id' => $id, 'owner' => $user]));
+    public function getById(User $user, int $id): Project {
+        $project = $this->projectRepository->findOneBy(['id' => $id, 'owner' => $user]);
+        if($project === null) {
+            throw new ProjectNotFoundException();
+        }
+        return $project;
     }
 
-    public function create(User $user, CreateProjectDTO $createProjectDTO): ProjectDto {
+    public function create(User $user, CreateProjectDTO $createProjectDTO): Project {
         $project = new Project();
         $project->setName($createProjectDTO->name)
             ->setOwner($user)
@@ -37,10 +42,10 @@ class ProjectService {
         $this->entityManager->persist($project);
         $this->entityManager->flush();
 
-        return $this->mapToProjectDTO($project);
+        return $project;
     }
 
-    public function update(User $user, EditProjectDTO $editProjectDTO, int $id): ProjectDTO {
+    public function update(User $user, EditProjectDTO $editProjectDTO, int $id): Project {
         $project = $this->projectRepository->findOneBy(['id' => $id, 'owner' => $user]);
         if ($project === null) {
             throw new ProjectNotFoundException();
@@ -50,7 +55,7 @@ class ProjectService {
             ->setDescription($editProjectDTO->description);
 
         $this->entityManager->flush();
-        return $this->mapToProjectDTO($project);
+        return $project;
     }
 
     public function delete(User $user, int $id): void {
@@ -61,14 +66,5 @@ class ProjectService {
 
         $this->entityManager->remove($project);
         $this->entityManager->flush();
-    }
-
-    private function mapToProjectDTO(project $project): ProjectDTO
-    {
-        return new ProjectDTO(
-            $project->getId(),
-            $project->getName(),
-            $project->getDescription()
-        );
     }
 }
