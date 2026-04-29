@@ -2,8 +2,10 @@
 
 namespace App\EventListener;
 
+use App\Exception\InvalidRefreshToken;
 use App\Exception\ProjectNotFoundException;
 use App\Exception\TaskNotFoundException;
+use App\Exception\UserEmailUniqueConstraint;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -23,6 +25,12 @@ class ExceptionListener
         }
         else if ($e instanceof TaskNotFoundException) {
             $response = new JsonResponse(['error' => 'Task not found'], 404);
+        }
+        else if ($e instanceof UserEmailUniqueConstraint) {
+            $response = new JsonResponse(['error' => 'Email already in use'], 409);
+        }
+        else if ($e instanceof InvalidRefreshToken) {
+            $response = new JsonResponse(['error' => 'Invalid refresh token'], 401);
         }
 
         if($response !== null) {

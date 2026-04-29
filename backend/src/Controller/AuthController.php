@@ -3,61 +3,32 @@
 namespace App\Controller;
 
 use App\DTO\RegisterDTO;
-use App\Entity\User;
-use App\Service\RefreshTokenService;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Doctrine\ORM\EntityManagerInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use App\Factory\CookieFactory;
+use App\Service\AuthService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
-use Symfony\Component\Serializer\Exception\UnexpectedValueException;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('api')]
+#[Route('api/auth', name: 'api_auth_')]
 class AuthController extends AbstractController
 {
-    #[Route('/register', name: 'api_register', methods: ['POST'])]
-    public function register(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    public function __construct(private AuthService $authService) {}
+    #[Route('/register', name: 'register', methods: ['POST'])]
+    public function register(#[MapRequestPayload] RegisterDTO $registerDTO): JsonResponse
     {
-        try {
-            $data = $serializer->deserialize($request->getContent(), RegisterDTO::class, 'json');
-        } catch (NotNormalizableValueException|UnexpectedValueException $ex) {
-            return $this->json(['error' => 'Invalid data'], 400);
-        }
-
-        $errors = $validator->validate($data);
-        if (count($errors) > 0) {
-            $violations = $this->formatErrors($errors);
-            return $this->json(['errors' => $violations], 400);
-        }
-
-
-        $user = new User();
-        $hashedPassword = $passwordHasher->hashPassword($user, $data->password);
-        $user->setPassword($hashedPassword)
-            ->setEmail($data->email);
-
-        try {
-            $em->persist($user);
-            $em->flush();
-        } catch (UniqueConstraintViolationException $ex) {
-            return $this->json(['errors' => ['email' => 'email already in use']], 409);
-        }
-
-        return $this->json(['email' => $user->getEmail()], 200);
+        $this->authService->register($registerDTO);
+        return $this->json(null, 204);
     }
 
-    #[Route('/logout', name: 'api_logout', methods: ['POST'])]
-    public function logout(): JsonResponse
+    #[Route('/logout', name: 'logout', methods: ['POST'])]
+    public function logout(Request $request): JsonResponse
     {
-        $response = new JsonResponse();
+        $this->authService->logout($request->cookies->get('refresh_token'));
+
+        $response = new JsonResponse(null, 204);
 
         $response->headers->clearCookie(
             'BEARER',
@@ -78,62 +49,23 @@ class AuthController extends AbstractController
         return $response;
     }
 
-    #[Route('/me', name: 'api_me', methods: ['GET'])]
+    #[Route('/me', name: 'me', methods: ['GET'])]
     public function me(#[CurrentUser] $user): JsonResponse
     {
         return $this->json(['email' => $user->getEmail()]);
     }
 
-    private function formatErrors($errors): array
+    #[Route('/refresh', name: 'refresh', methods: ['POST'])]
+    public function refresh(Request $request, CookieFactory $cookieFactory): JsonResponse
     {
-        $result = [];
-        foreach ($errors as $error) {
-            $result[$error->getPropertyPath()][] = $error->getMessage();
-        }
-        return $result;
-    }
+        $tokens = $this->authService->refreshToken($request->cookies->get('refresh_token'));
 
-    #[Route('/refresh', name: 'api_refresh', methods: ['GET'])]
-    public function refresh(Request $request, RefreshTokenService $refreshTokenService, JWTTokenManagerInterface $JWTManager): JsonResponse
-    {
-        $refreshTokenString = $request->cookies->get('refresh_token');
-        if(!$refreshTokenString) {
-            return $this->json(['error' => 'Refresh token not found'], 400);
-        }
+        $refreshToken = $tokens['refreshToken'];
+        $accessTokenString = $tokens['accessToken'];
 
-        $refreshToken = $refreshTokenService->getRefreshToken($refreshTokenString);
-        if(!$refreshToken) {
-            return $this->json(['error' => 'Invalid refresh token'], 401);
-        }
-
-        if($refreshToken->getExpiresAt() < new \DateTimeImmutable("now"))
-        {
-            $refreshTokenService->invalidateRefreshToken($refreshToken);
-            return $this->json(['error' => 'Refresh token expired'], 401);
-        }
-
-        $user = $refreshToken->getOwner();
-
-        $refreshTokenService->invalidateRefreshToken($refreshToken);
-        $newRefreshToken = $refreshTokenService->generateRefreshToken($user);
-
-        $accessToken = $JWTManager->create($user);
-
-        $cookie = Cookie::create('refresh_token', $newRefreshToken->getToken())
-            ->withHttpOnly(true)
-            ->withSecure(false)
-            ->withSameSite('Lax')
-            ->withExpires($newRefreshToken->getExpiresAt());
-
-        $jwtCookie = Cookie::create('BEARER', $accessToken)
-            ->withHttpOnly(true)
-            ->withSecure(false)
-            ->withSameSite('Lax')
-            ->withExpires(new \DateTimeImmutable("+ 1 minute"));
-
-        $response = new JsonResponse(['email' => $user->getEmail()], 200);
-        $response->headers->setCookie($cookie);
-        $response->headers->setCookie($jwtCookie);
+        $response = new JsonResponse(null, 204);
+        $response->headers->setCookie($cookieFactory->refreshToken($refreshToken));
+        $response->headers->setCookie($cookieFactory->accessToken($accessTokenString));
 
         return $response;
     }
