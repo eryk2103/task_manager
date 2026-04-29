@@ -21,14 +21,13 @@ class CookieFactory
             ->withExpires($refreshToken->getExpiresAt());
     }
 
-    public function accessToken(string $accessToken): Cookie
+    public function csrfToken(): Cookie
     {
-        $ttl = $this->parameterBag->get('lexik_jwt_authentication.token_ttl');
+        $token = bin2hex(random_bytes(64));
 
-        return Cookie::create('BEARER', $accessToken)
-            ->withHttpOnly(true)
+        return Cookie::create('csrf_token', $token)
+            ->withHttpOnly(false)
             ->withSecure(true)
-            ->withSameSite('Lax')
-            ->withExpires(new \DateTimeImmutable("+ {$ttl} seconds"));
+            ->withSameSite('Lax');
     }
 }

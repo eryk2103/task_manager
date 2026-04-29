@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
 import { TASK_STATUSES, type Task } from "./models";
 import CheckIcon from '@mui/icons-material/Check';
-import apiFetch from "../apiFetch";
+import useApiFetch from "../useApiFetch";
 
 export default function TaskDetail() {
     const [task, setTask] = useState<Task>({ id: 0, name: '', projectId: 0, status: "TODO", type: "BUG", priority: "MID" });
     const [statusSuccess, setStatusSuccess] = useState(false);
     const { id } = useParams();
     const navigate = useNavigate();
+    const { apiFetch } = useApiFetch();
 
     useEffect(() => {
         apiFetch('/tasks/' + id, {

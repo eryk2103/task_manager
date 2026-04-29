@@ -1,17 +1,19 @@
-import { createContext, useContext, useState, type ReactNode, useEffect } from "react";
+import { createContext, useContext, useState, type ReactNode, useEffect, type Dispatch, type SetStateAction } from "react";
 import { useNavigate } from "react-router";
 import { BadRequest, Conflict, Unauthorized } from "../errors";
 
 type AuthContextType = {
-    user: any;
+    user: User | null;
     loading: boolean;
     login: (email: string, password: string) => Promise<void>;
     register: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
+    setUser: Dispatch<SetStateAction<User | null>>;
 };
 
 type User = {
     email: string;
+    accessToken: string;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -22,28 +24,52 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch(import.meta.env.VITE_API_URL + '/me', {
-            method: "GET",
-            credentials: "include",
-        })
-            .then(res => {
+        const csrfToken = document.cookie.split('; ').find(row => row.startsWith('csrf_token='))?.split('=')[1] || '';
+
+        const refresh = async () => {
+            try {
+                const res = await fetch(import.meta.env.VITE_API_URL + '/auth/refresh', {
+                    method: "POST",
+                    credentials: "include",
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                })
+
                 if (!res.ok) {
-                    refreshToken();
-                    navigate('/');
+                    throw new Unauthorized();
                 }
-                return res.json();
-            })
-            .then(data => {
-                setUser({ email: data.email });
-            })
-            .catch(() => {
-                navigate('/login')
-            })
-            .finally(() => setLoading(false));
+
+                const data = await res.json();
+
+                const res2 = await fetch(import.meta.env.VITE_API_URL + '/auth/me', {
+                    method: "GET",
+                    credentials: "include",
+                    headers: {
+                        'Authorization': `Bearer ${data.token}`
+                    }
+                })
+
+                if (!res2.ok) {
+                    throw new Unauthorized();
+                }
+
+                const data2 = await res2.json();
+
+                setUser({ email: data2.email, accessToken: data.token })
+            }
+            catch {
+                navigate('/login');
+            }
+            finally {
+                setLoading(false);
+            }
+        }
+        refresh();
     }, []);
 
     const login = (email: string, password: string): Promise<void> => {
-        return fetch(import.meta.env.VITE_API_URL + '/login', {
+        return fetch(import.meta.env.VITE_API_URL + '/auth/login', {
             method: "POST",
             credentials: "include",
             headers: {
@@ -61,7 +87,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             }
             return res.json();
         }).then(data => {
-            setUser({ email: data.user.email });
+            const accessToken = data.token;
+            fetch(import.meta.env.VITE_API_URL + '/auth/me', {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            })
+                .then(res => {
+                    if (!res.ok) {
+                        navigate('/login');
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    setUser({ email: data.email, accessToken: accessToken })
+                })
         })
             .finally(() => {
                 setLoading(false);
@@ -69,7 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const register = (email: string, password: string): Promise<void> => {
-        return fetch(import.meta.env.VITE_API_URL + '/register', {
+        return fetch(import.meta.env.VITE_API_URL + '/auth/register', {
             method: "POST",
             credentials: "include",
             headers: {
@@ -96,9 +138,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const logout = (): Promise<void> => {
-        return fetch(import.meta.env.VITE_API_URL + '/logout', {
+        return fetch(import.meta.env.VITE_API_URL + '/auth/logout', {
             method: "POST",
             credentials: "include",
+            headers: {
+                'Authorization': `Bearer ${user?.accessToken}`
+            }
         }).then(res => {
             if (!res.ok) {
                 if (res.status === 401) {
@@ -113,24 +158,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         });
     }
 
-    const refreshToken = () => {
-        return fetch(import.meta.env.VITE_API_URL + '/refresh', {
-            method: "GET",
-            credentials: "include",
-        })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Unauthorized('Authentication failed');
-                }
-                return res.json();
-            })
-            .then(data => {
-                setUser({ email: data.email });
-            })
-    }
-
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+        <AuthContext.Provider value={{ user, loading, login, register, logout, setUser }}>
             {children}
         </AuthContext.Provider>
     );

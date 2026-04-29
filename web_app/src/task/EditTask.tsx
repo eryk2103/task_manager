@@ -2,7 +2,7 @@ import { Alert, Box, Breadcrumbs, Button, FormControl, InputLabel, Link, MenuIte
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
-import apiFetch from "../apiFetch";
+import useApiFetch from "../useApiFetch";
 
 const types = ["Feature", "Bug", "Refactor", "Improve", "Other"];
 const statuses = ["IDEA", "TODO", "IN_PROGRESS", "DONE"];
@@ -14,6 +14,7 @@ export default function EditTask() {
     const [error, setError] = useState('');
     const { id } = useParams();
     const [projectId, setProjectId] = useState();
+    const { apiFetch } = useApiFetch();
 
     useEffect(() => {
         const loadData = async () => {

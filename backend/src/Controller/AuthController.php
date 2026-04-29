@@ -31,14 +31,6 @@ class AuthController extends AbstractController
         $response = new JsonResponse(null, 204);
 
         $response->headers->clearCookie(
-            'BEARER',
-            '/',
-            null,
-            true,
-            true
-        );
-
-        $response->headers->clearCookie(
             'refresh_token',
             '/',
             null,
@@ -58,15 +50,23 @@ class AuthController extends AbstractController
     #[Route('/refresh', name: 'refresh', methods: ['POST'])]
     public function refresh(Request $request, CookieFactory $cookieFactory): JsonResponse
     {
-        $tokens = $this->authService->refreshToken($request->cookies->get('refresh_token'));
+        $csrfCookie = $request->cookies->get('csrf_token');
+        $csrfHeader = $request->headers->get('X-Csrf-Token');
+        $refreshTokenCookie = $request->cookies->get('refresh_token', '');
+
+        if(!($csrfCookie && $csrfHeader && hash_equals($csrfCookie, $csrfHeader))) {
+            return new JsonResponse(null, 403);
+        }
+
+        $tokens = $this->authService->refreshToken($refreshTokenCookie);
 
         $refreshToken = $tokens['refreshToken'];
-        $accessTokenString = $tokens['accessToken'];
+        $accessToken = $tokens['accessToken'];
 
-        $response = new JsonResponse(null, 204);
+        $response = new JsonResponse(['token' => $accessToken], 200);
+
         $response->headers->setCookie($cookieFactory->refreshToken($refreshToken));
-        $response->headers->setCookie($cookieFactory->accessToken($accessTokenString));
-
+        $response->headers->setCookie($cookieFactory->csrfToken());
         return $response;
     }
 }

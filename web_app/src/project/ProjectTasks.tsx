@@ -3,7 +3,7 @@ import { Fragment, useEffect, useState, type ChangeEvent } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
 import type { Project } from "./models";
 import type { Task } from "../task/models";
-import apiFetch from "../apiFetch";
+import useApiFetch from "../useApiFetch";
 
 type Status = "IDEA" | "TODO" | "IN_PROGRESS" | "DONE";
 
@@ -15,6 +15,7 @@ export default function ProjectTasks() {
     const navigate = useNavigate();
     const [pagination, setPagination] = useState({ page: 1, limit: 3, $total: 0, pages: 0 });
     const [page, setPage] = useState(1);
+    const { apiFetch } = useApiFetch();
 
     useEffect(() => {
         apiFetch('/projects/' + id)

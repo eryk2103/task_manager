@@ -2,13 +2,14 @@ import { Alert, Breadcrumbs, Button, Link, Stack, TextField, Typography } from "
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink, useNavigate, useParams } from "react-router";
-import apiFetch from "../apiFetch";
+import useApiFetch from "../useApiFetch";
 
 export default function EditProject() {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
     const navigate = useNavigate();
     const [error, setError] = useState('');
     const { id } = useParams();
+    const { apiFetch } = useApiFetch();
 
     useEffect(() => {
         apiFetch('/projects/' + id, {

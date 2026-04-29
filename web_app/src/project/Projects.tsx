@@ -4,8 +4,9 @@ import { Link, useNavigate } from "react-router";
 import AddIcon from '@mui/icons-material/Add';
 import type { Project } from "./models";
 import SearchField from "../shared/SearchField";
-import apiFetch from "../apiFetch";
 import { Unauthorized } from "../errors";
+import useApiFetch from "../useApiFetch";
+import { useAuth } from "../auth/authContext";
 
 export default function Projects() {
     const [projects, setProjects] = useState<Project[]>([]);
@@ -13,6 +14,8 @@ export default function Projects() {
     const [pagination, setPagination] = useState({ page: 1, pages: 1 });
     const [search, setSearch] = useState('');
     const navigate = useNavigate();
+    const { apiFetch } = useApiFetch();
+    const { user } = useAuth();
 
     useEffect(() => {
         apiFetch("/projects?search=" + search + '&page=' + pagination.page + '&limit=' + 10)
@@ -26,13 +29,12 @@ export default function Projects() {
             .catch(err => {
                 if (err instanceof Unauthorized) {
                     navigate('/login');
-                    return;
                 }
             })
             .finally(() => {
                 setLoading(false);
             });
-    }, [search, pagination.page]);
+    }, [search, pagination.page, user]);
 
     const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
         setPagination({ ...pagination, page: value });

@@ -2,12 +2,13 @@ import { Alert, Box, Breadcrumbs, Button, Link, Stack, TextField, Typography } f
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link as RouterLink, useNavigate } from "react-router";
-import apiFetch from "../apiFetch";
+import useApiFetch from "../useApiFetch";
 
 export default function Newproject() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
     const [error, setError] = useState('');
+    const { apiFetch } = useApiFetch();
 
     const onSubmit = async (data: any) => {
         try {

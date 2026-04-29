@@ -20,15 +20,12 @@ class AuthenticationSuccessListener
             throw new \Exception("AuthenticationSuccessListener: user is not of type App\Entity\User");
         }
 
-
-        $data['user'] = [
-            'email' => $user->getEmail(),
-        ];
-
         $event->setData($data);
         $refreshToken = $this->refreshTokenService->generateRefreshToken($user);
 
         $response = $event->getResponse();
         $response->headers->setCookie($this->cookieFactory->refreshToken($refreshToken));
+        $response->headers->setCookie($this->cookieFactory->csrfToken());
+
     }
 }
