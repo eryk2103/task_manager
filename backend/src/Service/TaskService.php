@@ -7,6 +7,7 @@ use App\DTO\EditTaskDTO;
 use App\Entity\Task;
 use App\Entity\User;
 use App\Enum\TaskStatus;
+use App\Exception\ProjectNotFoundException;
 use App\Exception\TaskNotFoundException;
 use App\Repository\ProjectRepository;
 use App\Repository\TaskRepository;
@@ -21,7 +22,7 @@ class TaskService
     public function getAll(User $user, int $projectId, TaskStatus $status = TaskStatus::TODO, int $page = 1, int $limit = 20): array
     {
         if($limit < 1 || $page < 1) {
-            return ['data' => [], 'total' => 0];
+            return ['data' => [], 'total' => 0, 'pages' => 0];
         }
 
         $result = $this->taskRepository->findByOwnerAndProject($user, $projectId, $status->name, $page, $limit);
@@ -43,6 +44,10 @@ class TaskService
     public function create(User $user, CreateTaskDTO $createTaskDTO): Task
     {
         $project = $this->projectRepository->findOneBy(['id' => $createTaskDTO->projectId, 'owner' => $user]);
+
+        if($project === null) {
+            throw new ProjectNotFoundException();
+        }
 
         $task = new Task();
         $task->setName($createTaskDTO->name)

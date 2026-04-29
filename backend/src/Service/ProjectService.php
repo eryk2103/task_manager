@@ -16,7 +16,7 @@ class ProjectService {
 
     public function getAll(User $user, string $search = '', int $page = 1, int $limit = 20): array {
         if($limit < 1 || $page < 1) {
-            return ['data' => [], 'total' => 0];
+            return ['data' => [], 'total' => 0, 'pages' => 0];
         }
 
         $result = $this->projectRepository->searchByName($search, $user, $page, $limit);
