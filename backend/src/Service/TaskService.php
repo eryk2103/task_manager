@@ -4,9 +4,6 @@ namespace App\Service;
 
 use App\DTO\CreateTaskDTO;
 use App\DTO\EditTaskDTO;
-use App\DTO\PaginationDTO;
-use App\DTO\TaskDTO;
-use App\DTO\PaginatedResultDTO;
 use App\Entity\Task;
 use App\Entity\User;
 use App\Enum\TaskStatus;
@@ -15,21 +12,36 @@ use App\Repository\ProjectRepository;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-class TaskService {
-    public function __construct(private TaskRepository $taskRepository, private EntityManagerInterface $em, private ProjectRepository $projectRepository) {}
+class TaskService
+{
+    public function __construct(private TaskRepository $taskRepository, private EntityManagerInterface $em, private ProjectRepository $projectRepository)
+    {
+    }
 
-    public function getAll(User $user, int $projectId, TaskStatus $status = TaskStatus::TODO, int $page = 1, int $limit = 20): PaginatedResultDTO {
+    public function getAll(User $user, int $projectId, TaskStatus $status = TaskStatus::TODO, int $page = 1, int $limit = 20): array
+    {
+        if($limit < 1 || $page < 1) {
+            return ['data' => [], 'total' => 0];
+        }
+
         $result = $this->taskRepository->findByOwnerAndProject($user, $projectId, $status->name, $page, $limit);
-        $tasksDTO = array_map(fn($item) => $this->mapToTaskDTO($item), $result['data']);
+        $pages = ceil($result['total'] / $limit);
 
-        return new PaginatedResultDTO($tasksDTO, new PaginationDTO($page, $limit, $result['total'], ceil($result['total'] / $limit)));
+        return ['data' => $result['data'], 'total' => $result['total'], 'pages' => $pages];
     }
 
-    public function getById(User $user, int $id): TaskDTO|null {
-        return $this->mapToTaskDTO($this->taskRepository->findOneByOwner($user, $id));
+    public function getById(User $user, int $id): Task
+    {
+        $task = $this->taskRepository->findOneByOwner($user, $id);
+        if($task === null) {
+            throw new TaskNotFoundException();
+        }
+
+        return $task;
     }
 
-    public function create(User $user, CreateTaskDTO $createTaskDTO): TaskDTO {
+    public function create(User $user, CreateTaskDTO $createTaskDTO): Task
+    {
         $project = $this->projectRepository->findOneBy(['id' => $createTaskDTO->projectId, 'owner' => $user]);
 
         $task = new Task();
@@ -42,12 +54,13 @@ class TaskService {
         $this->em->persist($task);
         $this->em->flush();
 
-        return $this->mapToTaskDTO($task);
+        return $task;
     }
 
-    public function update(User $user, EditTaskDTO $editTaskDTO, int $id): TaskDTO {
+    public function update(User $user, EditTaskDTO $editTaskDTO, int $id): Task
+    {
         $task = $this->taskRepository->findOneByOwner($user, $id);
-        if($task === null) {
+        if ($task === null) {
             throw new TaskNotFoundException();
         }
 
@@ -59,28 +72,17 @@ class TaskService {
         $this->em->persist($task);
         $this->em->flush();
 
-        return $this->mapToTaskDTO($task);
+        return $task;
     }
 
-    public function delete(User $user, int $id): void {
+    public function delete(User $user, int $id): void
+    {
         $task = $this->taskRepository->findOneByOwner($user, $id);
-        if($task === null) {
+        if ($task === null) {
             throw new TaskNotFoundException();
         }
 
         $this->em->remove($task);
         $this->em->flush();
-    }
-
-    private function mapToTaskDTO(Task $task): TaskDTO
-    {
-        return new TaskDTO(
-            $task->getId(),
-            $task->getName(),
-            $task->getStatus(),
-            $task->getProject()->getId(),
-            $task->getType(),
-            $task->getPriority()
-        );
     }
 }
